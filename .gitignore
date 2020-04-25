@@ -1,2 +1,14 @@
+__pycache__/*
 data/apikey.txt
 Backup/*
+result_backup/*
+results*
+HTML/*
+images/*
+images_person/
+images_yolo_class/*
+around_the_world_classifier_imac.ipynb
+file_path.txt
+
+.ipynb_checkpoints/around_the_world_classifier-checkpoint.ipynb
+.ipynb_checkpoints/around_the_world_classifier_imac-checkpoint.ipynb
