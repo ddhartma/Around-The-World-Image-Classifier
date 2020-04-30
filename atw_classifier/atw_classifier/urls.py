@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path
 from classification.views import classification, jupy_nb
 from photos.views import photo_list, photo_list_classification
+from results.views import results, analysis
+
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', classification),
@@ -26,6 +29,9 @@ urlpatterns = [
     path('jupy_nb/', jupy_nb, name="jupy_nb_script"),
     path('admin/', admin.site.urls),
     path('photos/', photo_list, name='photo_list'),
+    path('results/', results, name='results'),
+    path('result_table', TemplateView.as_view(template_name="table.html"),name='result_table'),
+    path('analysis/', analysis, name='analysis'),
 ]
 
 if settings.DEBUG:
