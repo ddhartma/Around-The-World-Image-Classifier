@@ -152,21 +152,66 @@ def filter_by_groups_eval(df_in, selected_value_yolo, selected_value_imageNet, s
         
 
 # CHeck if test GPS coordinates are within a circle with given lon, lat and radius
-def haversine(lon1, lat1, lon2, lat2):
-    """
-    Calculate the great circle distance between two points 
-    on the earth (specified in decimal degrees)
-    """
-    # convert decimal degrees to radians 
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+def haversine(df_in, lon1, lat1, radius, gps_areas=True):
+    if gps_areas == True:
+        """
+        Calculate the great circle distance between two points 
+        on the earth (specified in decimal degrees)
+        """
+        print('df_in[GPS]')
+        print(df_in['GPS'])
 
-    # haversine formula 
-    dlon = lon2 - lon1 
-    dlat = lat2 - lat1 
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a)) 
-    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
-    return c * r
+        df_in['lat2'] = [eval(x)[0] for x in df_in['GPS'].to_list()]
+        df_in['lon2'] = [eval(x)[1] for x in df_in['GPS'].to_list()]
+        
+        lat2 = df_in['lat2']
+        lon2 = df_in['lon2']
+
+
+        print('lat2 in')
+        print(lat2)
+        print('lon2 in')
+        print(lon2)
+    
+        # convert decimal degrees to radians 
+        lon1, lat1 = map(radians, [float(lon1), float(lat1)])
+
+        lon2 = lon2.astype(float)
+        lat2 = lat2.astype(float)
+        lon2 = np.radians(lon2)
+        lat2 = np.radians(lat2)
+
+        print('lon1 radians')
+        print(lon1)
+        print('lat1 radians')
+        print(lat1)
+
+        print('lon2 radians')
+        print(lon2)
+        print('lat2 radians')
+        print(lat2)
+
+        # haversine formula 
+        dlon = lon2 - lon1 
+        dlat = lat2 - lat1 
+
+        print('dlon')
+        print(dlon)
+        print('dlat')
+        print(dlat)
+
+
+        a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+        c = 2 * np.arcsin(np.sqrt(a)) 
+        r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+
+        df_filter = df_in[c*r <= float(radius)]
+        return df_filter
+
+    else: 
+        df_filter = df_in
+    return df_filter
+
 
 # Transform DataFRame with images to HTML
 #  - Check  file path. If null return False (to get None for Byte conversion)
@@ -231,12 +276,21 @@ def get_filtered_dataFrame(selected_start_date, selected_end_date, selected_valu
 
     # datatime filter
     df_filter = time_periods_eval(df, selected_start_date, selected_end_date, time_periods = True)
+    print('df_filter datetime')
+    print(df_filter)
 
     # yolo & imageNet filter
     df_filter = filter_by_groups_eval(df_filter, selected_value_yolo, selected_value_imageNet, selected_logic, filter_by_groups = True)
-
-    print('df_filter datetime')
+    print('df_filter classes')
     print(df_filter)
+
+    # GPS filter
+    df_filter = haversine(df_filter, current_location_lon, current_location_lat, current_radius, gps_areas=True)
+
+    print('df_filter gps')
+    print(df_filter)
+
+
 
     df_as_html(df_filter)
 
