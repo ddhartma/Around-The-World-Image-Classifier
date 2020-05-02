@@ -15,3 +15,13 @@ file_path.txt
 images.html
 images.xlsx
 mediafiles/*
+
+atw_classifier/filter_results/__pycache__/views.cpython-37.pyc
+
+atw_classifier/templates/bar_plot_counts_per_day.html
+atw_classifier/templates/bar_plot_imageNet_counts.html
+atw_classifier/templates/bar_plot_yolo_counts.html
+atw_classifier/test.html
+
+
+images_imgPerDay.xlsx
