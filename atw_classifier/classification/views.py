@@ -18,7 +18,7 @@ def check_folderPaths():
     except:
         pass
             
-    try:
+    try: 
         image_folder = file_path_str.split(',')[0]
     except:
         image_folder = 'No image_folder found'

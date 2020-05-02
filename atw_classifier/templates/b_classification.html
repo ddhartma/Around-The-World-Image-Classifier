@@ -57,10 +57,10 @@
                     
               
                         <div class="carousel-caption">
-                          
-                        <img src="{{ photo.image.url }}" alt="Image"  height="500"> 
-                        <h3>{{ photo.image }}</h3>
-              
+                        {% if photo.file %}
+                        <img src="{{ photo.file.url }}" alt="Image"  height="500"> 
+                        <h3>{{ photo.file }}</h3>
+                        {% endif %}
                         </div>
                         </div>
                         {% endfor %}
