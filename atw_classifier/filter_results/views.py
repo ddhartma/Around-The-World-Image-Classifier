@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 from photos.views import photo_list_classification
+from photos.models import Photo
 from classification.views import check_folderPaths
 
 import requests
@@ -30,7 +31,9 @@ from PIL import Image, ImageDraw
 import base64
 import io
 
+import json
 
+# Get folder paths and file names for DataFrames df, copy html report
 def results_dataframe():
     # Get result folderpath
     image_folder, yolo_folder, person_folder, file_path_copy_dataframe = check_folderPaths()
@@ -42,51 +45,24 @@ def results_dataframe():
     result_xlsx_file = result_file_name + '.xlsx'
     result_xlsx_path = image_folder + '.xlsx'
     
-    # df_count as xlsx
-    result_imgPerDay_xlsx_file = result_file_name + '_imgPerDay.xlsx'
-    result_imgPerDay_xlsx_path = image_folder + '_imgPerDay.xlsx'
-
-
-    # df as html
-    result_html_file = result_file_name + '.html'
-    result_html_path = image_folder + '.html'
-
-    # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-    dst_path = os.path.join(BASE_DIR, 'templates', 'table.html')
-    print('dst_path')
-    print(dst_path)
-    copyfile(result_html_path, dst_path)
-
-    return result_xlsx_path, result_imgPerDay_xlsx_path, image_folder
+    return result_xlsx_path, image_folder
 
 def dataframe_analysis():
-    result_xlsx_path, result_imgPerDay_xlsx_path , image_folder = results_dataframe()
+    result_xlsx_path, _ = results_dataframe()
 
-    print('---------------------------------')
-    print('result_xlsx_path:')
-    print(result_xlsx_path)
-    print('result_imgPerDay_xlsx_path:')
-    print(result_imgPerDay_xlsx_path)
-    print('---------------------------------')
     df = pd.read_excel(result_xlsx_path)
-    df_count = pd.read_excel(result_imgPerDay_xlsx_path)
-    print(df.describe())
-    print(df.head(10))
-
+    
     # yolo classifications
     yolo_list = [eval(x) for x in df['classes_yolo'].to_list()]
     yolo_flat_list = [item for sublist in yolo_list for item in sublist]
     yolo_flat_list = list(set(yolo_flat_list))
-    print(yolo_flat_list)
+   
 
     # ImageNet classifications
     imageNet_list = [eval(x) for x in df['classes_ImgNet'].to_list()]
     imageNet_flat_list = [item for sublist in imageNet_list for item in sublist]
     imageNet_flat_list = list(set(imageNet_flat_list))
-    print(imageNet_flat_list)
-
+   
     return yolo_flat_list, imageNet_flat_list
 
 # Filter for datetimes
@@ -129,19 +105,15 @@ def filter_by_groups_eval(df_in, selected_value_yolo, selected_value_imageNet, s
               
         if selected_value_yolo !='' and selected_value_imageNet !='':
             if selected_value_yolo in classes_yolo_merged and selected_value_imageNet in classes_ImgNet_merged:
-                print('case1')
                 if selected_logic == 'OR':
                     df_filter = df_in[df_in.yolo_chosen | df_in.ImgNet_chosen]
                 elif selected_logic == 'AND':
                     df_filter = df_in[df_in.yolo_chosen & df_in.ImgNet_chosen]
             elif selected_value_yolo not in classes_yolo_merged and selected_value_imageNet in classes_ImgNet_merged:
-                print('case2')
                 df_filter = df_in[df_in.ImgNet_chosen]
             elif selected_value_yolo in classes_yolo_merged and selected_value_imageNet not in classes_ImgNet_merged:
-                print('case3')
                 df_filter = df_in[df_in.yolo_chosen]
             else:
-                print('case4')
                 df_filter = df_in
             
         df_filter.sort_values('date_time', inplace=True, ascending=True)
@@ -150,7 +122,6 @@ def filter_by_groups_eval(df_in, selected_value_yolo, selected_value_imageNet, s
         df_filter = df_in
     return df_filter
         
-
 # CHeck if test GPS coordinates are within a circle with given lon, lat and radius
 def haversine(df_in, lon1, lat1, radius, gps_areas=True):
     if gps_areas == True:
@@ -158,21 +129,12 @@ def haversine(df_in, lon1, lat1, radius, gps_areas=True):
         Calculate the great circle distance between two points 
         on the earth (specified in decimal degrees)
         """
-        print('df_in[GPS]')
-        print(df_in['GPS'])
-
         df_in['lat2'] = [eval(x)[0] for x in df_in['GPS'].to_list()]
         df_in['lon2'] = [eval(x)[1] for x in df_in['GPS'].to_list()]
         
         lat2 = df_in['lat2']
         lon2 = df_in['lon2']
 
-
-        print('lat2 in')
-        print(lat2)
-        print('lon2 in')
-        print(lon2)
-    
         # convert decimal degrees to radians 
         lon1, lat1 = map(radians, [float(lon1), float(lat1)])
 
@@ -181,36 +143,21 @@ def haversine(df_in, lon1, lat1, radius, gps_areas=True):
         lon2 = np.radians(lon2)
         lat2 = np.radians(lat2)
 
-        print('lon1 radians')
-        print(lon1)
-        print('lat1 radians')
-        print(lat1)
-
-        print('lon2 radians')
-        print(lon2)
-        print('lat2 radians')
-        print(lat2)
-
         # haversine formula 
         dlon = lon2 - lon1 
         dlat = lat2 - lat1 
-
-        print('dlon')
-        print(dlon)
-        print('dlat')
-        print(dlat)
-
 
         a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
         c = 2 * np.arcsin(np.sqrt(a)) 
         r = 6371 # Radius of earth in kilometers. Use 3956 for miles
 
         df_filter = df_in[c*r <= float(radius)]
+       
         return df_filter
 
     else: 
-        df_filter = df_in
-    return df_filter
+        
+        return df_in
 
 
 # Transform DataFRame with images to HTML
@@ -242,7 +189,6 @@ def get_image_asraw_Base64(im):
 
     return html_img
     
-
 # Transform DataFrame with images to HTML
 def df_as_html(df):
     pd.set_option('display.max_colwidth', -1) 
@@ -262,84 +208,162 @@ def df_as_html(df):
     html = df.to_html(formatters={'image': get_image_asraw_Base64, 'image_yolo': get_image_asraw_Base64}, escape=False)
    
     #with open(image_folder + '.html', 'w') as f:
-    with open('test.html', 'w') as f:
+    with open('./templates/filter_result.html', 'w') as f:
         f.write(html)
 
-def get_filtered_dataFrame(selected_start_date, selected_end_date, selected_value_yolo, selected_value_imageNet, selected_logic, current_location_lat, current_location_lon, current_radius):
-    result_xlsx_path, result_imgPerDay_xlsx_path , image_folder = results_dataframe()
+# Collector of function calls to get df_filter
+def get_filtered_dataFrame(selected_start_date, selected_end_date, selected_value_yolo, selected_value_imageNet, selected_logic, current_location_lat, current_location_lon, current_radius, selected_gps_label):
+    result_xlsx_path, image_folder = results_dataframe()
     df = pd.read_excel(result_xlsx_path)
+    if df.empty == False:
+        try: 
+            df.drop('Unnamed: 0', inplace =True, axis=1)
+        except:
+            pass
 
-    try: 
-        df.drop('Unnamed: 0', inplace =True, axis=1)
-    except:
-        pass
+        # datatime filter
+        df_filter = time_periods_eval(df, selected_start_date, selected_end_date, time_periods = True)
+    
+        if df_filter.empty == False:
+            # yolo & imageNet filter
+            df_filter = filter_by_groups_eval(df_filter, selected_value_yolo, selected_value_imageNet, selected_logic, filter_by_groups = True)
 
-    # datatime filter
-    df_filter = time_periods_eval(df, selected_start_date, selected_end_date, time_periods = True)
-    print('df_filter datetime')
-    print(df_filter)
+        if df_filter.empty == False:
+            # GPS filter
+            df_filter = haversine(df_filter, current_location_lon, current_location_lat, current_radius, gps_areas=selected_gps_label)
 
-    # yolo & imageNet filter
-    df_filter = filter_by_groups_eval(df_filter, selected_value_yolo, selected_value_imageNet, selected_logic, filter_by_groups = True)
-    print('df_filter classes')
-    print(df_filter)
-
-    # GPS filter
-    df_filter = haversine(df_filter, current_location_lon, current_location_lat, current_radius, gps_areas=True)
-
-    print('df_filter gps')
-    print(df_filter)
+        if df_filter.empty == False:
+            df_as_html(df_filter)
+        else:
+            pass
+           
+    return df_filter
 
 
+def gps_info(df_filter):
+    df_in = df_filter
+    df_filter = df_filter[df_filter['GPS'] != '(None, None)']
 
-    df_as_html(df_filter)
+    df_filter = df_filter.sort_values('img_path',ascending=True)
+  
+    img_path_infobox = []
+    for path in df_filter['img_path'].to_list():
+        _, tail = os.path.split(path)
+        img_path_infobox.append(tail)
+
+    img_path_infobox_all = []
+    for path in df_in['img_path'].to_list():
+        _, tail = os.path.split(path)
+        img_path_infobox_all.append(tail)
+    
+    img_path = df_filter['img_path'].to_list()
+    
+    date_time =df_filter['date_time'].to_list()
+    GPS = eval(str(df_filter['GPS'].to_list()))
+    classes_yolo = df_filter['classes_yolo'].to_list()
+    classes_ImgNet = df_filter['classes_ImgNet'].to_list()
+ 
+    return df_filter, img_path, img_path_infobox, img_path_infobox_all, date_time, GPS, classes_yolo, classes_ImgNet
+
+
+def image_info_sidebox(df_filter):
+    photo_obj = Photo()
+    df_filter.loc[df_filter.GPS == '(None, None)', "GPS"] = "('None', 'None')"
+
+    df_filter = df_filter.sort_values('img_path',ascending=True)
+  
+    img_path_infobox = []
+    for path in df_filter['img_path'].to_list():
+        _, tail = os.path.split(path)
+        tail = os.path.join(photo_obj.upload_folder, tail)
+        img_path_infobox.append(tail)
+
+    img_path = df_filter['img_path'].to_list()
+    
+    date_time =df_filter['date_time'].to_list()
+    GPS = eval(str(df_filter['GPS'].to_list()))
+    classes_yolo = df_filter['classes_yolo'].to_list()
+    classes_ImgNet = df_filter['classes_ImgNet'].to_list()
+ 
+    return df_filter, img_path, img_path_infobox, date_time, GPS, classes_yolo, classes_ImgNet
+
+
+def get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df, selected_gps_label):
+    photo_context = photo_list_classification()
+    print('++++++++++++++++photo_context+++++++++++++++')
+    photo_list_from_media = [photo.file.name for photo in photo_context['photos']]
+    print(len(photo_list_from_media))
+    print(photo_list_from_media)
+
+    photos_to_show_all = []
+    for photo in photo_context['photos']:
+        head, tail = os.path.split(photo.file.name)
+        photos_to_show_all.append(tail)
+    
+    photos_to_show_display = [os.path.split(photo.file.name)[1] for photo in photo_context['photos'] if  os.path.split(photo.file.name)[1] in img_path_infobox]
+    photos_to_show_sorted_indices = [i[0] for i in sorted(enumerate(photos_to_show_display), key=lambda x:x[1])]
+    photos_to_show_display = sorted(photos_to_show_display)
+    photos_to_show = [photo for photo in photo_context['photos'] if os.path.split(photo.file.name)[1]  in img_path_infobox]
+    photos_to_show = [photos_to_show[index] for index in photos_to_show_sorted_indices]
+    if selected_gps_label == False:
+        print('******************GPS IS OFF ******************')
+        photos_to_show_display_viewer = [os.path.split(photo.file.name)[1] for photo in photo_context['photos'] if  os.path.split(photo.file.name)[1] in img_path_infobox_all]
+        photos_to_show_sorted_indices_viewer = [i[0] for i in sorted(enumerate(photos_to_show_display_viewer), key=lambda x:x[1])]
+        photos_to_show_display_viewer = sorted(photos_to_show_display_viewer)
+        photos_to_show_viewer = [photo for photo in photo_context['photos'] if os.path.split(photo.file.name)[1]  in img_path_infobox_all]
+        photos_to_show_viewer = [photos_to_show_viewer[index] for index in photos_to_show_sorted_indices_viewer]
+    else:
+        print('******************GPS IS ON ******************')
+        photos_to_show_display_viewer = photos_to_show_display
+        photos_to_show_sorted_indices_viewer = photos_to_show_sorted_indices
+        photos_to_show_display_viewer = sorted(photos_to_show_display)
+        photos_to_show_viewer = photos_to_show
+    
+
+    print('photos_to_show_display')
+    print(photos_to_show_display)
+    print(len(photos_to_show))
+    print(photos_to_show)
+    print('photos_to_show_display_viewer')
+    print(photos_to_show_display_viewer)
+    print(len(photos_to_show_viewer))
+    print(photos_to_show_viewer)
+    print('************************************************')
+
+    if df.empty:
+            photos_to_show_viewer = [photo for photo in photo_context['photos'] if os.path.split(photo.file.name)[1].lower() == "no_data.png"]
+    else:
+        photos_to_show_viewer = [photo for photo in photos_to_show_viewer if os.path.split(photo.file.name)[1].lower() != "no_data.png"]
+    
+    return photos_to_show, photos_to_show_viewer
 
 # Get data choice from website: Yolo, ImageNet, datetime selction, GPS data
 def filter_results(request): 
-    
+    global photos_to_show_viewer
     yolo_flat_list, imageNet_flat_list = dataframe_analysis()
-    result_xlsx_path, result_imgPerDay_xlsx_path , image_folder = results_dataframe()
-
+    
+    result_xlsx_path, image_folder = results_dataframe()
+    
+    yolo_flat_list = sorted(yolo_flat_list)
+    imageNet_flat_list = sorted(imageNet_flat_list)
     yolo_flat_list.insert(0,'all')
     imageNet_flat_list.insert(0,'all')
-    yolo_flat_list = [element.strip().replace(' ', '_') for element in yolo_flat_list]
-    imageNet_flat_list = [element.strip().replace(' ', '_') for element in imageNet_flat_list]
-
     
+    # If user triggers an event
+ 
+      
     if request.method == 'POST':
+       
         selected_value_yolo = request.POST['drop1']
         selected_value_imageNet = request.POST['drop2']
-
         selected_logic = request.POST.get('selected_logic_sl', False)
-
         selected_start_date = request.POST['start']
         selected_end_date = request.POST['end']
-        
         current_location_lat = request.POST['current_location_lat']
         current_location_lon = request.POST['current_location_lon']
-        
-
         current_radius = request.POST['current_radius']
-
-        print('selected_value_yolo')
-        print(selected_value_yolo)
-        print('selected_value_imageNet')
-        print(selected_value_imageNet)
-
-        print('selected_logic')
-        print(selected_logic)
-
-        print('selected_start_date')
-        print(selected_start_date)
-        print('selected_end_date')
-        print(selected_end_date)
-
-        print('current_location_lat')
-        print(current_location_lat)
-        print('current_location_lon')
-        print(current_location_lon)
-        print('current_radius')
-        print(current_radius)
+        current_zoom = request.POST['current_zoom']
+        selected_gps_state = request.POST.get('selected_gps_state', False)
 
         if selected_logic == 'on':
             selected_logic_label = 'OR'
@@ -348,6 +372,58 @@ def filter_results(request):
             selected_logic_label = 'AND'
             selected_logic_back =''
 
+        if selected_gps_state == 'on':
+            selected_gps_label = True
+            selected_gps_back = 'checked'
+        else:
+            selected_gps_label = False
+            selected_gps_back =''
+       
+      
+        df_filter = get_filtered_dataFrame(selected_start_date, 
+                                                       selected_end_date, 
+                                                       selected_value_yolo,
+                                                       selected_value_imageNet,
+                                                       selected_logic_label,
+                                                       current_location_lat,
+                                                       current_location_lon,
+                                                       current_radius,
+                                                       selected_gps_label
+                                                       )
+        print('Bin zurück******************************************* 2')
+      
+        df_gps, img_path, img_path_infobox, img_path_infobox_all, date_time, GPS, classes_yolo, classes_ImgNet = gps_info(df_filter)
+
+        print('Bin zurück******************************************* 3')
+      
+        photos_to_show, photos_to_show_viewer = get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df_gps, selected_gps_label)
+
+        lats = [eval(x)[0] for x in df_gps['GPS'].to_list()]
+        longs = [eval(x)[1] for x in df_gps['GPS'].to_list()]
+        markers_and_infos = zip(lats, 
+                                longs, 
+                                img_path,
+                                date_time,
+                                GPS,
+                                classes_yolo,
+                                classes_ImgNet,
+                                photos_to_show
+                                )
+       
+        df_filter, img_path_sb, img_path_infobox_sb, date_time_sb, GPS_sb, classes_yolo_sb, classes_ImgNet_sb  = image_info_sidebox(df_filter)
+
+        lats_sb = [eval(x)[0] for x in df_filter['GPS'].to_list()]
+        longs_sb = [eval(x)[1] for x in df_filter['GPS'].to_list()]
+
+        markers_and_infos_json = [list(a) for a in zip(lats_sb, 
+                                longs_sb, 
+                                [str(im_p) for im_p in img_path_infobox_sb],
+                                [str(dt) for dt in date_time_sb],
+                                GPS_sb,
+                                classes_yolo_sb,
+                                classes_ImgNet_sb,
+                                )]
+        
         ctx = {
             'yolo_select': yolo_flat_list,
             'imageNet_select': imageNet_flat_list,
@@ -359,40 +435,96 @@ def filter_results(request):
             'current_loc_lat': current_location_lat,
             'current_loc_lon': current_location_lon,
             'current_rad': current_radius,
+            'curr_zoom': current_zoom,
+            'photos_class': photos_to_show_viewer,
+            'selec_gps' : selected_gps_back,
+            'markers_and_infos' : markers_and_infos,
+            'markers_and_infos_json' : markers_and_infos_json,
             }
 
         
-
-        photo_list_to_display = get_filtered_dataFrame(selected_start_date, 
-                                                       selected_end_date, 
-                                                       selected_value_yolo,
-                                                       selected_value_imageNet,
-                                                       selected_logic_label,
-                                                       current_location_lat,
-                                                       current_location_lon,
-                                                       current_radius
-                                                       )
-
-       
+    # Initialization of webpage
     else:
-        print('DA BIN ICH AUCH DURCH')
+
+        result_xlsx_path, image_folder = results_dataframe()
+        df = pd.read_excel(result_xlsx_path)
+        df = df.sort_values('img_path',ascending=True)
+        df_gps, img_path, img_path_infobox, img_path_infobox_all, date_time, GPS, classes_yolo, classes_ImgNet = gps_info(df)
+        
+        
+        photos_to_show, photos_to_show_viewer = get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df_gps, selected_gps_label=False)
+      
+        lats = [eval(x)[0] for x in df_gps['GPS'].to_list()]
+        longs = [eval(x)[1] for x in df_gps['GPS'].to_list()]
+        markers_and_infos = zip(lats, 
+                                longs, 
+                                img_path,
+                                date_time,
+                                GPS,
+                                classes_yolo,
+                                classes_ImgNet,
+                                photos_to_show
+                                )
+
+        print('lats')
+        print(lats)
+        print('img_path')
+        print(img_path)
+        print('date_time')
+        print(date_time)
+        print('GPS LIST')
+        print(GPS)
+        print('classes_yolo')
+        print(classes_yolo)
+        print('classes_ImgNet')
+        print(classes_ImgNet)
+     
+        
+        df, img_path_sb, img_path_infobox_sb, date_time_sb, GPS_sb, classes_yolo_sb, classes_ImgNet_sb  = image_info_sidebox(df)
+
+        lats_sb = [eval(x)[0] for x in df['GPS'].to_list()]
+        longs_sb = [eval(x)[1] for x in df['GPS'].to_list()]
+
+        markers_and_infos_json = [list(a) for a in zip(lats_sb, 
+                                longs_sb, 
+                                [str(im_p) for im_p in img_path_infobox_sb],
+                                [str(dt) for dt in date_time_sb],
+                                GPS_sb,
+                                classes_yolo_sb,
+                                classes_ImgNet_sb,
+                                )]
+        print('markers_and_infos_json')
+        print(markers_and_infos_json)
+
         ctx = {
             'yolo_select': yolo_flat_list,
             'imageNet_select': imageNet_flat_list,
-            'selected_yolo': '',
-            'selected_imageNet': '',
+            'selected_yolo': 'all',
+            'selected_imageNet': 'all',
             'selec_log': 'checked',
             'selected_start': '01/01/1976',
             'selected_end':  datetime.today().strftime('%m/%d/%Y'),
-            'current_loc_lat': '',
-            'current_loc_lon': '',
-            'current_rad': '',
+            'current_loc_lat': '0',
+            'current_loc_lon': '0',
+            'current_rad': '500',
+            'curr_zoom': 2.5,
+            'photos_class': photos_to_show_viewer,
+            'selec_gps' : '',
+            'markers_and_infos' : markers_and_infos,
+            'markers_and_infos_json' : markers_and_infos_json,
             }
        
     return render(request, 'f_filter.html', ctx)
+
+def filter_result_table_page(request):
+    return render(request, 'g_filter_result.html')
+
+def photo_list_filtered(request):
+    global photos_to_show_viewer
+    return render(request, "c_photo.html", {'photos': photos_to_show_viewer})
     
 
 def imageNet_class_object(request): 
    
     answer = request.GET['imageNet_dropdown'] 
-    print(answer)
+   
