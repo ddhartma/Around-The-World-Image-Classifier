@@ -1,0 +1,236 @@
+body {
+    background: #F3F3F3;
+    color: white;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    margin: auto;
+    padding: 0;
+    max-width: 2300px;
+
+
+}
+,
+.navbar-wrapper {
+  margin: 0px;
+
+}
+
+}
+header {
+    background: black;
+    padding: 20px;
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+
+.upper_sec, .lower_sec {
+    color: grey;
+    display: flex;
+    width: 100%;
+}
+
+.control_sec{
+  color: grey;
+  text-align: left;
+
+
+}
+
+.viewer_class_img {
+    width: 100%;
+    height: auto;
+  }
+
+.viewer_class_img_horizontal {
+    width: 100%;
+    height: auto;
+  }
+
+.card {
+    background: white;
+    width: 100%;
+    margin: 10px;
+    padding: 20px;
+}
+
+.card_control {
+  margin: 10px;
+  padding: 20px;
+}
+
+
+
+@media screen and (max-width: 500px) {
+  .card_control {
+    display: block;
+  }
+}
+
+
+
+.sub_title {
+    color: blue;
+    font-weight:bold;
+  }
+
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+a {
+    color: white;
+}
+
+footer {
+    background: black;
+    padding: 10px 20px;
+}
+
+/* BUTTON STYLE */
+a.button {
+    -moz-box-shadow: inset 0 0 0 1px #63ad0d;
+    -webkit-box-shadow: inset 0 0 0 1px #63ad0d;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #eee;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#eee), to(#e2e2e2));
+    background: -moz-linear-gradient(#eee, #e2e2e2);
+    background: linear-gradient(#eee, #e2e2e2);
+    border: solid 1px #d0d0d0;
+    border-bottom: solid 10px #b2b1b1;
+    border-radius: 5px;
+    box-shadow: inset 0 0 0 1px #f5f5f5;
+    color: #555;
+    display: flex;
+
+
+    font: bold 12px Arial, Helvetica, Clean, sans-serif;
+    margin: 0 25px 25px 0;
+    padding: 10px 20px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fafafa; }
+
+.input_path {
+    background-color: #F3F3F3;
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: left;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 100%;
+    height: 30px;
+    }
+
+
+/**
+* Blue
+*/
+a.button.blue {
+    background: #abe4f8;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#abe4f8), to(#74d0f4));
+    background: -moz-linear-gradient(#abe4f8, #74d0f4);
+    background: linear-gradient(#abe4f8, #74d0f4);
+    border: solid 1px #8cc5d9;
+    border-bottom: solid 3px #589cb6;
+    box-shadow: inset 0 0 0 1px #cdeffb;
+    color: #42788e;
+    text-shadow: 0 1px 0 #b6e6f9; }
+
+  a.button.blue:hover {
+    background: #80d4f5;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#80d4f5), to(#92dbf6));
+    background: -moz-linear-gradient(#80d4f5, #92dbf6);
+    background: linear-gradient(#80d4f5, #92dbf6);
+    border: solid 1px #79acbe;
+    border-bottom: solid 3px #589cb6;
+    box-shadow: inset 0 0 0 1px #b2e6f8; }
+
+  a.button.blue:active {
+    background: #89d2ee;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#89d2ee), to(#84cae6));
+    background: -moz-linear-gradient(#89d2ee, #84cae6);
+    background: linear-gradient(#89d2ee, #84cae6);
+    border: solid 1px #5c8d9f;
+    box-shadow: inset 0 10px 15px 0 #79b9d2; }
+
+
+
+/* TABLE DATA ANALYSIS */
+
+table{
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    color: grey;
+    border-collapse: collapse;
+    width: calc(100% - 40px);
+    margin: 20px;
+  }
+
+  td, #customers th {
+    border: 1px solid #ddd;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12px;
+    padding-right: 100px;
+  }
+
+  tr:nth-child(even){
+    background-color: #d9f2e6;
+  }
+
+  tr:hover {background-color: #ddd;}
+
+  th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    text-align: left;
+    background-color: #153728;
+    color: white;
+  }
+
+
+  /* ------ SLIDER ------ */
+  .slider_rad {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    vertical-align: text-top;
+    margin: 0;
+  }
+
+  .slider_rad:hover {
+    opacity: 1;
+  }
+
+  .slider_rad::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #42788e;
+    cursor: pointer;
+  }
+
+.label_descr {
+  color: #42788e;
+}

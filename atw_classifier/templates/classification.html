@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-        
+
     <section class="upper_sec">
         <div class="card">
             <h2>IMAGE VIEWER</h2>
@@ -12,7 +12,7 @@
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
 
-                <!-- Wrapper for slides 
+                <!-- Wrapper for slides
                 ================================================== -->
                 <div class="carousel-inner">
                     {% for photo in photos_class %}
@@ -21,21 +21,21 @@
                     {% else %}
                     <div class="item" style="width:100%; height:1000px">
                         {% endif %}
-                    
-            
+
+
                         <div class="carousel-caption">
                             <br/>
                             {% if photo.file %}
-                            
-                            <img class="viewer_class_img" src="{{ photo.file.url }}" alt="Image"> 
+
+                            <img class="viewer_class_img" src="{{ photo.file.url }}" alt="Image">
                             <h4>{{ photo.file }}</h4>
                         {% endif %}
                         </div>
                     </div>
                     {% endfor %}
                     </div>
-          
-                    <!-- Left and right controls 
+
+                    <!-- Left and right controls
                     ================================================== -->
                     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -48,7 +48,7 @@
                 </div>
               </div>
         </div>
-    
+
     </section>
     <section class="lower_sec">
         <div class="card">
@@ -56,11 +56,11 @@
                 <p>In order to start the classification of your images click on 'Start Jupyter Notebook' below.
                 This will open the Jupyter Notebook <span class="sub_title">around_the_world_classifier.ipynb</span>. Please follow the instructions in the notebook for further information.
                 </p>
-        </div> 
+        </div>
     </section>
     <section class="lower_sec">
         <div class="card">
-            <form action="/view/" method="post"></form>
+            <form action="/view/" method="post">
                 <h3>Paths setting stored in the Jupyter Notebook: </h3>
                     {% csrf_token%}
                     <p>Path folder to your <span class="sub_title">original images</span>: </p>
@@ -79,9 +79,9 @@
     </section>
     <section class="lower_sec">
         <div class="card">
-            <h3>Click to start the Jupyter Notebook: <span class="sub_title">around_the_world_classifier.ipynb</span></h3>   
+            <h3>Click to start the Jupyter Notebook: <span class="sub_title">around_the_world_classifier.ipynb</span></h3>
             <a href="{% url 'jupy_nb_script' %}" class="button blue">Start Jupyter notebook</a>
-            <h3>Click to start the Jupyter Notebook: <span class="sub_title">personal_classifier.ipynb</span></h3> 
+            <h3>Click to start the Jupyter Notebook: <span class="sub_title">personal_classifier.ipynb</span></h3>
             <a href="{% url 'jupy_nb_script' %}" class="button blue">Start Jupyter notebook</a>
         </div>
     </section>
