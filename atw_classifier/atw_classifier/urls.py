@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from classification.views import classification, jupy_nb
+from classification.views import classification, jupy_nb, home
 from photos.views import photo_list, photo_list_classification
 from results.views import results, analysis
 from filter_results.views import filter_results, filter_result_table_page, photo_list_filtered
@@ -28,7 +28,10 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', classification),
-    
+ 
+
+    path('home/', home, name="home_script"),
+
     path('classification/', classification, name="classification_script"),
     path('jupy_nb/', jupy_nb, name="jupy_nb_script"),
     path('admin/', admin.site.urls, name='admin'),

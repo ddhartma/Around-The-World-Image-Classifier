@@ -1,101 +1,108 @@
-{% extends "a_layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
-
-<div class="row">
-    <div class="column">
-        
-        <h2>DATA ANALYSIS</h2>
-        <p>Classifcation in numbers and plots.<br></p>
-        
-    </div>
-    <div class="column">
-        
-        <h2>YOLO AND IMAGENET CLASSIFICATION</h2>
-        <p>Bar charts to quantify the amount of observed classes.<br></p>
-    </div>
-</div>
-  
-<div class="row">
-    <div class="column">
-        <table>
-            <thead>
+    <section class="upper_sec">
+        <div class="card">
+            <h2>CLASSIFICATION IN NUMBERS</h2>
+            <p>Some extracted numbers from the data set analysis are provided below. </p>
+        </div>
+    </section>
+    <section class="upper_sec">
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                <tbody>
                 <tr>
-                    <th>Property</th>
-                    <th>Value</th>
+                    <td># of images total </td>
+                    <td>{{num_img_total}}</td>
                 </tr>
-                </thead>
-            <tbody>
-            <tr>
-                <td># of images total </td>
-                <td>{{num_img_total}}</td>
-            </tr>
-            <tr>
-                <td># Yolo class hits</td>
-                <td>{{num_img_classified_yolo}}</td>
-            </tr>
-            <tr>
-                <td># ImageNet class hits</td>
-                <td>{{num_img_classified_imageNet}}</td>
-            </tr>
-            <tr>
-                <td># of images with GPS</td>
-                <td>{{num_img_gps}}</td>
-            </tr>
-            <tr>
-                <td>DateTime range earliest date</td>
-                <td>{{dateTime_range_early}}</td>
-            </tr>
-            <tr>
-                <td>DateTime range latest date</td>
-                <td>{{dateTime_range_late}}</td>
-            <tr>
-                <td>Image with earliest date</td>
-                <td>{{img_early_date}}</td>
-            </tr>
-            <tr>
-                <td>Image with latest date</td>
-                <td>{{img_late_date}}</td>
-            </tr>
-            <tr>
-                <td># of missing days</td>
-                <td>{{num_miss_days}}</td>
-            <tr>
-                <td># of images with human beings</td>
-                <td>{{num_img_human}}</td>
-            </tr>
-            <tr>
-                <td># of images w/o human beings</td>
-                <td>{{num_img_wo_human}}</td>
-            </tr>
-            <tr>
-                <td>Total # of identified human beings</td>
-                <td>{{num_total_humans}}</td>
-            </tr>
-            <tr>
-                <td>mean # of humans on imgages with humans</td>
-                <td>{{mean_human_num_per_img}}</td>
-            </tr>
-            
-            </tbody>
-        </table>
-    </div>
-    <div class="column">
+                <tr>
+                    <td># Yolo class hits</td>
+                    <td>{{num_img_classified_yolo}}</td>
+                </tr>
+                <tr>
+                    <td># ImageNet class hits</td>
+                    <td>{{num_img_classified_imageNet}}</td>
+                </tr>
+                <tr>
+                    <td># of images with GPS</td>
+                    <td>{{num_img_gps}}</td>
+                </tr>
+                <tr>
+                    <td>DateTime range earliest date</td>
+                    <td>{{dateTime_range_early}}</td>
+                </tr>
+                <tr>
+                    <td>DateTime range latest date</td>
+                    <td>{{dateTime_range_late}}</td>
+                <tr>
+                    <td>Image with earliest date</td>
+                    <td>{{img_early_date}}</td>
+                </tr>
+                <tr>
+                    <td>Image with latest date</td>
+                    <td>{{img_late_date}}</td>
+                </tr>
+                <tr>
+                    <td># of missing days</td>
+                    <td>{{num_miss_days}}</td>
+                <tr>
+                    <td># of images with human beings</td>
+                    <td>{{num_img_human}}</td>
+                </tr>
+                <tr>
+                    <td># of images w/o human beings</td>
+                    <td>{{num_img_wo_human}}</td>
+                </tr>
+                <tr>
+                    <td>Total # of identified human beings</td>
+                    <td>{{num_total_humans}}</td>
+                </tr>
+                <tr>
+                    <td>mean # of humans on imgages with humans</td>
+                    <td>{{mean_human_num_per_img}}</td>
+                </tr>
+                
+                </tbody>
+            </table>
+        </div>
         
-        {% include "bar_plot_yolo_counts.html" %}
-    
-    </div>
-</div>
-<div class="row">
-    <div class="column">
-       
-        {% include "bar_plot_counts_per_day.html" %}
-       
-    </div>
-    <div class="column">
-        
-        {% include "bar_plot_imageNet_counts.html" %}
-       
-    </div>
-</div>
-      
+    </section>
+    <section class="upper_sec">
+        <div class="card">
+            <h2>IMAGES PER DAY</h2>
+            <p>In the chart below the number of images taken per day are visualized.</p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            {% include "bar_plot_counts_per_day.html" %}
+        </div>
+    </section>
+    <section class="upper_sec">
+        <div class="card">
+            <h2>YOLO CLASSIFICATION RESULT</h2>
+            <p>Bar charts to quantify the amount of observed YOLO classes.<br></p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            {% include "bar_plot_yolo_counts.html" %}
+        </div>
+    </section>
+    <section class="upper_sec">
+        <div class="card">
+            <h2>IMAGENET CLASSIFICATION RESULT</h2>
+            <p>Bar charts to quantify the amount of observed IMAGENET classes.<br></p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            {% include "bar_plot_imageNet_counts.html" %}
+        </div>
+    </section>
 {% endblock %}

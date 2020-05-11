@@ -1,0 +1,70 @@
+ <<!DOCTYPE html>
+<html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Travel Classification</title>
+            
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+            
+            <style type="text/css">
+            @media (min-width:1200px){.container{width:auto}}
+            </style>
+
+
+            {% load static %}
+                        
+            <link rel="stylesheet" type="text/css" href="{% static 'styles11.css' %}">
+            <!-- Standalone -->
+            <link href="{% static 'datepicker.min.css' %}" rel="stylesheet" type="text/css"/>
+            <!-- For Bootstrap 4 -->
+            <link href="{% static 'datepicker-bs4.min.css' %}" rel="stylesheet" type="text/css"/>
+            <!-- For Bulma -->
+            <link href="{% static 'datepicker-bulma.min.css' %}" rel="stylesheet" type="text/css"/>
+            <!-- For Foundation -->
+            <link href="{% static 'datepicker-foundation.min.css' %}" rel="stylesheet" type="text/css"/>
+        </head>
+        
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><h1 id="page_title" style="color: grey">Around The World Classifier</h1></li>
+                    <li><a href="{% url 'home_script' %}">Home</a></li>
+                    <li><a href="{% url 'classification_script' %}">Classification</a></li>
+                    <li><a href="{% url 'results' %}">Result Table</a></li>
+                    <li><a href="{% url 'analysis' %}">Data Analysis</a></li>
+                    <li><a href="{% url 'filter_results' %}">Filter Results</a></li>
+                    <li><a href="{% url 'photo_list' %}">Photos</a></li>
+                    <li><a href="{% url 'photos:basic_upload' %}">Upload Images</a></li>
+                </ul>
+            </nav>
+       
+            {% block content %}
+            
+            {% endblock %}
+    
+        <footer>footer</footer>
+    
+        <!--A "DO NOT SCROLL HEADER"-->
+        <script>
+            window.onscroll = function() {header_no_scroll()};
+            
+            var header = document.getElementById("page_title");
+            var sticky = header.offsetTop;
+            
+            function header_no_scroll() {
+              if (window.pageYOffset > sticky) {
+                header.classList.add("sticky");
+              } else {
+                header.classList.remove("sticky");
+              }
+            }
+        </script>
+        
+
+
+    </body>
+</html> 

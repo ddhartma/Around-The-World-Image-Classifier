@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block content %}
+        
+    <section class="upper_sec">
+        <div class="card">
+            <h2>IMAGE VIEWER</h2>
+            <p>Below you find an image viewer with which you can discover the image database.</p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+
+                <!-- Wrapper for slides 
+                ================================================== -->
+                <div class="carousel-inner">
+                    {% for photo in photos_class %}
+                    {% if forloop.counter == 1 %}
+                    <div class="item active" style="margin: 100px; width:100%; height:1000px">
+                    {% else %}
+                    <div class="item" style="width:100%; height:1000px">
+                        {% endif %}
+                    
+            
+                        <div class="carousel-caption">
+                            <br/>
+                            {% if photo.file %}
+                            
+                            <img class="viewer_class_img" src="{{ photo.file.url }}" alt="Image"> 
+                            <h4>{{ photo.file }}</h4>
+                        {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+          
+                    <!-- Left and right controls 
+                    ================================================== -->
+                    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+              </div>
+        </div>
+    
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <h2>CLASSIFICATION</h2>
+                <p>In order to start the classification of your images click on 'Start Jupyter Notebook' below.
+                This will open the Jupyter Notebook <span class="sub_title">around_the_world_classifier.ipynb</span>. Please follow the instructions in the notebook for further information.
+                </p>
+        </div> 
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <form action="/view/" method="post"></form>
+                <h3>Paths setting stored in the Jupyter Notebook: </h3>
+                    {% csrf_token%}
+                    <p>Path folder to your <span class="sub_title">original images</span>: </p>
+                    <input class="input_path" id="folder_path_original_id" name="folder_path_original_param" type="text" value={{data1}} ><br><br>
+
+                    <p>Path folder for saving <span class="sub_title">Yolo classification images</span>: </p>
+                    <input class="input_path" id="folder_path_yolo_id" name="folder_path_yolo_param" type="text" value={{data2}} ><br><br>
+
+                    <p>Path folder for saving <span class="sub_title">Personal classification images</span>: </p>
+                    <input class="input_path" id="folder_path_personal_id" name="folder_path_personal_param" type="text" value={{data3}}><br><br>
+
+                    <p>Path folder for <span class="sub_title">Safety Backup</span>: </p>
+                    <input class="input_path" id="folder_path_backup_id" name="folder_path_backup_param" type="text" value={{data4}}><br><br>
+                </form>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <h3>Click to start the Jupyter Notebook: <span class="sub_title">around_the_world_classifier.ipynb</span></h3>   
+            <a href="{% url 'jupy_nb_script' %}" class="button blue">Start Jupyter notebook</a>
+            <h3>Click to start the Jupyter Notebook: <span class="sub_title">personal_classifier.ipynb</span></h3> 
+            <a href="{% url 'jupy_nb_script' %}" class="button blue">Start Jupyter notebook</a>
+        </div>
+    </section>
+{% endblock %}

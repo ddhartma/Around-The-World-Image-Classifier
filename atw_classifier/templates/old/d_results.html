@@ -1,0 +1,21 @@
+{% extends "a_layout.html" %}
+{% block content %}
+
+    <div id="Results">
+        <!-- leftcolumn -->
+        <div class="card">
+            <h2>RESULT TABLE</h2> 
+            <iframe id="encoder_iframe" height=80% width=100% src="{% url 'result_table' %}">
+            </iframe>
+
+        </div>
+    </div>
+    <script>
+        window.onload = function() {
+        let myiFrame = document.getElementById("encoder_iframe");
+        let doc = myiFrame.contentDocument;
+        doc.body.innerHTML = doc.body.innerHTML + '<style>.dataframe {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; border-collapse: collapse; width: 100%; } .dataframe td, #customers th {border: 1px solid #ddd; padding: 8px;} .dataframe tr:nth-child(even){background-color: #f2f2f2;} .dataframe tr:hover {background-color: #ddd;} .dataframe th {padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #4CAF50; color: white;} </style>';
+        }
+
+    </script>
+{% endblock %}
