@@ -402,7 +402,7 @@ def filter_results(request):
 
 
         photos_to_show, photos_to_show_viewer = get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df_gps, selected_gps_label)
-        photos_to_show_viewer_href = [photos.file.url in photos_to_show_viewer]
+        photos_to_show_viewer_href = [photos.file.url for photos in photos_to_show_viewer]
 
         lats = [eval(x)[0] for x in df_gps['GPS'].to_list()]
         longs = [eval(x)[1] for x in df_gps['GPS'].to_list()]
@@ -461,8 +461,8 @@ def filter_results(request):
 
 
         photos_to_show, photos_to_show_viewer = get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df_gps, selected_gps_label=False)
-        photos_to_show_viewer_href = [photos.file.url in photos_to_show_viewer]
-        
+        photos_to_show_viewer_href = [photos.file.url for photos in photos_to_show_viewer]
+
         lats = [eval(x)[0] for x in df_gps['GPS'].to_list()]
         longs = [eval(x)[1] for x in df_gps['GPS'].to_list()]
         markers_and_infos = zip(lats,
