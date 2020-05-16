@@ -346,6 +346,17 @@ def get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df, se
 # Get data choice from website: Yolo, ImageNet, datetime selction, GPS data
 def filter_results(request):
     global photos_to_show_viewer
+    global photos
+    global photos_to_show_viewer_href
+    global current_location_lat
+    global current_location_lon
+    global current_zoom
+    global markers_and_infos
+    global markers_and_infos_json
+    global current_radius
+
+
+
     yolo_flat_list, imageNet_flat_list = dataframe_analysis()
 
     result_xlsx_path, image_folder = results_dataframe()
@@ -531,8 +542,14 @@ def filter_result_table_page(request):
 
 def photo_list_filtered(request):
     global photos_to_show_viewer
-    return render(request, "c_photo.html", {'photos': photos_to_show_viewer})
-
+    return render(request, "c_photo.html", {'photos': photos_to_show_viewer,
+                                            'current_loc_lat': current_location_lat,
+                                            'current_loc_lon': current_location_lon,
+                                            'current_rad': current_radius,
+                                            'curr_zoom': current_zoom,
+                                            'photos_class_href': photos_to_show_viewer_href,
+                                            'markers_and_infos' : markers_and_infos,
+                                            'markers_and_infos_json' : markers_and_infos_json,})
 
 def imageNet_class_object(request):
 
