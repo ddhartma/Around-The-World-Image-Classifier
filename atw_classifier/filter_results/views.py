@@ -586,6 +586,26 @@ def get_label_classification(request):
         print(label_in_array[2])
         print(deep_learn_image_array3)
 
+        dic_label = {
+            'favorites': favorite_image_array,
+            str(label_in_array[0]): deep_learn_image_array1,
+            str(label_in_array[1]): deep_learn_image_array2,
+            str(label_in_array[2]): deep_learn_image_array3,
+        } 
+        df = pd.DataFrame.from_dict(dic_label, orient='index')
+        df = df.transpose()
+        cwd = os.getcwd()
+        try: 
+            
+            os.makedirs(os.path.join(cwd, 'fav_and_labels')) 
+        except: 
+            pass
+        
+        d_time = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = 'fa_and_labels_' + d_time + '.xlsx'
+
+        filepath = os.path.join(cwd, 'fav_and_labels', filename)
+        df.to_excel(filepath)
 
 
 
