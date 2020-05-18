@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.conf import settings
 
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+
 from photos.views import photo_list_classification
 from photos.models import Photo
 from classification.views import check_folderPaths
@@ -356,7 +359,6 @@ def filter_results(request):
     global current_radius
 
 
-
     yolo_flat_list, imageNet_flat_list = dataframe_analysis()
 
     result_xlsx_path, image_folder = results_dataframe()
@@ -542,6 +544,13 @@ def filter_result_table_page(request):
 
 def photo_list_filtered(request):
     global photos_to_show_viewer
+    global photos_to_show_viewer_href
+    global current_location_lat
+    global current_location_lon
+    global current_zoom
+    global markers_and_infos
+    global markers_and_infos_json
+    global current_radius
     return render(request, "c_photo.html", {'photos': photos_to_show_viewer,
                                             'current_loc_lat': current_location_lat,
                                             'current_loc_lon': current_location_lon,
@@ -551,6 +560,44 @@ def photo_list_filtered(request):
                                             'markers_and_infos' : markers_and_infos,
                                             'markers_and_infos_json' : markers_and_infos_json,})
 
+@require_POST
+def get_label_classification(request):
+    global photos_to_show_viewer
+    global photos_to_show_viewer_href
+    global current_location_lat
+    global current_location_lon
+    global current_zoom
+    global markers_and_infos
+    global markers_and_infos_json
+    global current_radius
+    if request.method == 'POST':
+        print('Yeah POST')
+        favorite_image_array = request.POST.getlist('favorite_image_array[]')
+        label_in_array = request.POST.getlist('label_array[]')
+        deep_learn_image_array1 = request.POST.getlist('deep_learn_image_array1[]')
+        deep_learn_image_array2 = request.POST.getlist('deep_learn_image_array2[]')
+        deep_learn_image_array3 = request.POST.getlist('deep_learn_image_array3[]')
+        print('favorite_image_array')
+        print(favorite_image_array)
+        print(label_in_array[0])
+        print(deep_learn_image_array1)
+        print(label_in_array[1])
+        print(deep_learn_image_array2)
+        print(label_in_array[2])
+        print(deep_learn_image_array3)
+
+
+
+
+    return render(request, "c_photo.html", {'photos': photos_to_show_viewer,
+                                            'current_loc_lat': current_location_lat,
+                                            'current_loc_lon': current_location_lon,
+                                            'current_rad': current_radius,
+                                            'curr_zoom': current_zoom,
+                                            'photos_class_href': photos_to_show_viewer_href,
+                                            'markers_and_infos' : markers_and_infos,
+                                            'markers_and_infos_json' : markers_and_infos_json,})
+   
 def imageNet_class_object(request):
 
     answer = request.GET['imageNet_dropdown']

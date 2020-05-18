@@ -21,7 +21,7 @@ from django.conf.urls import url, include
 from classification.views import classification, jupy_nb, home
 from photos.views import photo_list, photo_list_classification
 from results.views import results, analysis
-from filter_results.views import filter_results, filter_result_table_page, photo_list_filtered
+from filter_results.views import filter_results, filter_result_table_page, photo_list_filtered, get_label_classification
 
 from django.views.generic import TemplateView
 
@@ -52,6 +52,8 @@ urlpatterns = [
 
     path('analysis/', analysis, name='analysis'),
     path('filter_results/', filter_results, name='filter_results'),
+
+    path('get_label_classification/', get_label_classification, name='get_label_classification'),
 ]
 
 if settings.DEBUG:
