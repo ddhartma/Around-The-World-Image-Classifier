@@ -1,7 +1,35 @@
 {% extends "layout.html" %}
 {% block content %}
-
     <section class="upper_sec">
+        <div class="card">
+            <h2>Aim & basic principle</h2>
+            <p>This is a Django webserver application. It incorporates Jupyter notebook operation and web page visualization of a deep learning - image classification topic.
+                Via Jupyter notebooks the deep learning background and data exctration (image classification, GPS data, datetime) is processed, evaluated and documentated. Image uploads, data analysis and classification results are organized and shown via web pages. Data analysis visualization is supported by Plotly plots, tables and image bags.</p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <h3>The Jupyter notebook <span class="sub_title2">around_the_world_classifier.ipynb</span>, has four purposes:</h3>
+            <ol>
+                <li style="display:list-item">It extracts datetimes (if available)</li>
+                <li style="display:list-item">It extracts GPS data (if available)</li>
+                <li style="display:list-item">It provides object classification via yolo3v, ImageNet and personalized CNNs</li>
+                <li style="display:list-item">It filters, sorts and rearranges images based on the extraced data</li>
+            </ol>
+            <p>Datetimes and GPS data are extracted from the image meta data using the pillow library.</p>
+        </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card">
+            <h3>The photo classification is realized in three different approaches:</h3>
+            <ol>
+                <li style="display:list-item">by using a yolov3 object detection algorithm. Here, I am using yolov3 pretrained wheights. Deep Learning Inference with own images enables a detection of up to 80 different classes within one image. A Boundary box with a class description is provided and stored in a separate folder <span class="sub_title2">.../path_to_your_image_folder_name_</span> _yolo_class_  as well as stored in an html table (<span class="sub_title2">your_image_folder_name.html</span>).</li>
+                <li style="display:list-item">by using a CNN based pretrained model from Torchvision via Transfer Learning. As a standard VGG16 is chosen. However, you can replace VGG16 by any other torchvision model. VGG16 is using the whole ImageNet classification system, The total number of classes is 1000. The file <span class="sub_title2">data/imagenet_classes.txt</span> provides a dictionary of all one 1000 classes.</li>
+                <li style="display:list-item">by using an own CNN based architecture with a layer combination of three times 'Conv-ReLU-MaxPool', deeply enough for sufficient feature extraction and an appropriate image size/feature reduction. The goal of this CNN is to filter peronalized images, e.g. to identify images of yourself. However, for this classification step you have to provide a dataset of at least 300 personolized images. This CNN is not pretrained. You have to train it separately. For further information, follow the instruction in the Jupyter Notebook.</li>
+            </ol>
+        </div>
+    </section>
+    <section class="lower_sec">
         <div class="card">
             <h2>IMAGE VIEWER</h2>
             <p>Below you find an image viewer with which you can discover the image database.</p>
@@ -17,9 +45,9 @@
                 <div class="carousel-inner">
                     {% for photo in photos_class %}
                     {% if forloop.counter == 1 %}
-                    <div class="item active" style="margin: 100px; width:100%; height:1000px">
+                    <div style="height:500px" class="item active viewer_class_img_container" >
                     {% else %}
-                    <div class="item" style="width:100%; height:1000px">
+                    <div style="height:500px" class="item viewer_class_img_container" >
                         {% endif %}
 
 
