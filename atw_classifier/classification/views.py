@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 from photos.views import photo_list_classification
+from django.contrib.auth.decorators import login_required
 
 import requests
 import os
@@ -10,7 +11,6 @@ try:
     from applescript import tell
 except:
     pass
-
 
 def check_folderPaths():
     cwd_path = os.getcwd()
@@ -44,6 +44,7 @@ def check_folderPaths():
 
     return image_folder, yolo_folder, person_folder, file_path_copy_dataframe
 
+@login_required
 def classification(request):
 
     image_folder, yolo_folder, person_folder, file_path_copy_dataframe = check_folderPaths()
@@ -55,7 +56,7 @@ def classification(request):
                                              'data4': file_path_copy_dataframe,
                                              'photos_class': photo_context['photos'],
                                              })
-
+@login_required
 def jupy_nb(request):
     """
     openJupyter = 'jupyter notebook'
@@ -89,17 +90,19 @@ def jupy_nb(request):
                                              'photos_class': photo_context['photos'],
                                              })
 
-
+@login_required
 def home(request):
     return render(request, 'e_info.html')
 
+@login_required
 def results(request):
     return render(request, 'c_results.html')
 
 
-
+@login_required
 def filter(request):
     return render(request, 'd_filter.html')
 
+@login_required
 def info(request):
     return render(request, 'e_info.html')

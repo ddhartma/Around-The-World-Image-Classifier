@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 
-from django.views.decorators.http import require_POST
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 
 from django.core.files import File
@@ -13,14 +11,11 @@ from photos.models import Photo
 from photos.forms import PhotoForm
 from classification.views import check_folderPaths
 
-
-
 import requests
 import os
 import subprocess
 from shutil import copyfile
 from datetime import datetime, date, timedelta
-
 
 import pandas as pd
 from collections import Counter
@@ -46,6 +41,7 @@ import json
 slideIndex=1
 
 # Get folder paths and file names for DataFrames df, copy html report
+
 def results_dataframe():
     # Get result folderpath
     image_folder, yolo_folder, person_folder, file_path_copy_dataframe = check_folderPaths()
@@ -357,6 +353,7 @@ def get_filtered_photoset_to_show(img_path_infobox, img_path_infobox_all, df, se
     return photos_to_show, photos_to_show_viewer
 
 # Get data choice from website: Yolo, ImageNet, datetime selction, GPS data
+@login_required
 def filter_results(request):
     global photos_to_show_viewer
     global photos
@@ -549,9 +546,11 @@ def filter_results(request):
 
     return render(request, 'f_filter.html', ctx)
 
+@login_required
 def filter_result_table_page(request):
     return render(request, 'g_filter_result.html')
 
+@login_required
 def photo_list_filtered(request):
     global photos_to_show_viewer
     global photos_to_show_viewer_href
@@ -563,16 +562,8 @@ def photo_list_filtered(request):
     global current_radius
     global slideIndex
     if request.method == 'POST':
-        
         slideIndex = request.POST['slideIndex']
-        print('SlieIndex from Try')
-        print(slideIndex)
 
-    else:
-        print('SlieIndex from else')
-        
-
-    print('actual_Slide_INDEX')
     print(slideIndex)
     photo_context_yolo = photo_yolo_list_classification()
     print('++++++++++++++++photo_name_list_yolo+++++++++++++++')
@@ -600,6 +591,7 @@ def photo_list_filtered(request):
 
 from PIL import Image as PilImage
 
+@login_required
 def rotateLeft(request):
     photo_obj = Photo()
     global photos_to_show_viewer
@@ -652,7 +644,7 @@ def rotateLeft(request):
                                             'slideIndex' : slideIndex,
                                            })
 
-
+@login_required
 def get_label_classification(request):
     global photos_to_show_viewer
     global photos_to_show_viewer_href
@@ -709,7 +701,8 @@ def get_label_classification(request):
                                             'photos_class_href': photos_to_show_viewer_href,
                                             'markers_and_infos' : markers_and_infos,
                                             'markers_and_infos_json' : markers_and_infos_json,})
-   
+
+@login_required  
 def imageNet_class_object(request):
 
     answer = request.GET['imageNet_dropdown']
