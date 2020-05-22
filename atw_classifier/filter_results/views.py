@@ -3,10 +3,17 @@ from django.conf import settings
 
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.http import HttpResponse
 
-from photos.views import photo_list_classification
+
+from django.core.files import File
+
+from photos.views import photo_list_classification, photo_yolo_list_classification
 from photos.models import Photo
+from photos.forms import PhotoForm
 from classification.views import check_folderPaths
+
+
 
 import requests
 import os
@@ -14,7 +21,7 @@ import subprocess
 from shutil import copyfile
 from datetime import datetime, date, timedelta
 
-from django.http import HttpResponse
+
 import pandas as pd
 from collections import Counter
 import collections
@@ -32,8 +39,11 @@ import numpy as np
 from PIL import Image, ImageDraw
 import base64
 import io
+from io import StringIO, BytesIO
 
 import json
+
+slideIndex=1
 
 # Get folder paths and file names for DataFrames df, copy html report
 def results_dataframe():
@@ -551,6 +561,31 @@ def photo_list_filtered(request):
     global markers_and_infos
     global markers_and_infos_json
     global current_radius
+    global slideIndex
+    if request.method == 'POST':
+        
+        slideIndex = request.POST['slideIndex']
+        print('SlieIndex from Try')
+        print(slideIndex)
+
+    else:
+        print('SlieIndex from else')
+        
+
+    print('actual_Slide_INDEX')
+    print(slideIndex)
+    photo_context_yolo = photo_yolo_list_classification()
+    print('++++++++++++++++photo_name_list_yolo+++++++++++++++')
+    photo_name_list_yolo = [photo.file.name for photo in photo_context_yolo['photos_yolo']]
+    print(len(photo_name_list_yolo))
+    print(photo_name_list_yolo)
+
+    photos_to_show_all = []
+    for photo in photo_context_yolo['photos_yolo']:
+        head, tail = os.path.split(photo.file.name)
+        photos_to_show_all.append(tail)
+        print(photo.file.name)
+        
     return render(request, "c_photo.html", {'photos': photos_to_show_viewer,
                                             'current_loc_lat': current_location_lat,
                                             'current_loc_lon': current_location_lon,
@@ -558,9 +593,66 @@ def photo_list_filtered(request):
                                             'curr_zoom': current_zoom,
                                             'photos_class_href': photos_to_show_viewer_href,
                                             'markers_and_infos' : markers_and_infos,
-                                            'markers_and_infos_json' : markers_and_infos_json,})
+                                            'markers_and_infos_json' : markers_and_infos_json,
+                                            'photo_name_list_yolo': photos_to_show_all,
+                                            'photo_yolo_context': photo_context_yolo,
+                                            'slideIndex' : slideIndex,})
 
-@require_POST
+from PIL import Image as PilImage
+
+def rotateLeft(request):
+    photo_obj = Photo()
+    global photos_to_show_viewer
+    global photos_to_show_viewer_href
+    global current_location_lat
+    global current_location_lon
+    global current_zoom
+    global markers_and_infos
+    global markers_and_infos_json
+    global current_radius
+    global slideIndex
+    if request.method == 'POST':
+        print('Yeah POSTo')
+        slideIndex = request.POST['slideIndex']
+        
+        image_src = request.POST.get('image_src')
+        print(image_src)
+        filename_parts = image_src.replace('\\', '/').split('/')
+        filename = os.path.join(filename_parts[-2], filename_parts[-1])
+        print(filename)
+    
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "mediafiles")
+        file_path = os.path.join(MEDIA_ROOT, filename)
+    
+        photo_to_change = Photo.objects.get(file=filename)
+
+
+        try:
+            os.remove(request.Photo.file.url)
+            print('file removed')
+        except Exception as e:
+            print('Exception in removing old profile image: ', e)
+
+        im = Image.open(photo_to_change.file.path) 
+
+
+        im = im.rotate(-90,expand=True)
+        im.save(photo_to_change.file.path)
+
+        
+    return render(request, "c_photo.html", {'photos': photos_to_show_viewer,
+                                            'current_loc_lat': current_location_lat,
+                                            'current_loc_lon': current_location_lon,
+                                            'current_rad': current_radius,
+                                            'curr_zoom': current_zoom,
+                                            'photos_class_href': photos_to_show_viewer_href,
+                                            'markers_and_infos' : markers_and_infos,
+                                            'markers_and_infos_json' : markers_and_infos_json,
+                                            'slideIndex' : slideIndex,
+                                           })
+
+
 def get_label_classification(request):
     global photos_to_show_viewer
     global photos_to_show_viewer_href
