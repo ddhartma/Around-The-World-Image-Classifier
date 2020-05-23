@@ -1,0 +1,723 @@
+{% extends "layout.html" %}
+{% block content %}
+{% load static %}
+<!-- script for DatePicker -->
+
+<form method = "post" action = "{% url 'filter_results' %}">
+<script src="{% static 'datepicker-full.min.js' %}"></script>
+    <section class="control_sec">
+        <div class="container">
+            <a href="#" class="btn btn-default openall">open all</a>
+            <a href="#" class="btn btn-default closeall">close all</a>
+            <a href="{% url 'filter_result_table_page' %}" class="btn btn-default">Result Table</a>
+            <a href="{% url 'photo_list_filtered' %}" class="btn btn-default">Slide Show</a>
+
+
+            <input type="submit" value="Submit" class="btn btn-default"/>
+            
+            <hr>
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Classification
+                        <input id="set_drop2_in" name="drop2" type="text" value="{{selected_imageNet}}" style="float: right; width: 120px; height: 20px;"/>
+
+                        <span id="logic_state2" style="color: green; float: right;" for="switchvalue">AND</span>
+
+                        <input id="set_drop1_in" name="drop1" type="text" value="{{selected_yolo}}" style="float: right; width: 110px; height: 20px;"/>
+
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                    <ul>
+                        <li>
+                            <label class="label_descr" for="drop1_selection"> Yolo: </label>
+                            {% csrf_token %}
+                            <select id="drop1_selection" class="select" onchange="set_drop1()">
+                                {% for k in yolo_select %}
+                                <option>{{ k }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                        <li>
+                            <label class="switch">
+                                <input type="checkbox" id="switchvalue" name="selected_logic_sl" {{selec_log}} onclick="set_logic()">
+                                <span class="slider round"></span>
+                            </label>
+                            <label id="logic_state" style="color: green;" for="switchvalue"> AND</label>
+                        </li>
+                        <li>
+                            <label class="label_descr" style="padding-left: 20px" for="drop2_selection">ImageNet:</label>
+                            <select id="drop2_selection" class="select" onchange="set_drop2()">
+                                {% for k in imageNet_select %}
+                                <option>{{ k }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                      Date
+                      <span id="date_state" style="color: green; float: right;"> Active</span>
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse">
+                  <div class="panel-body" id="date_range">
+                    <ul>
+                        <li>
+                            <label class="label_descr" for="date_from">From: </label>
+                            <input id="date_from" type="text" name="start" value={{selected_start}}>
+                        </li>
+                        <li>
+                            <label class="label_descr" for="date_to">To: </label>
+                            <input id="date_to" type="text" name="end" value={{selected_end}}>
+                        </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                        GPS Filter
+                        <span id="gps_state" style="color: green; float: right;"> ON</span>
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <label class="switch">
+                        <input type="checkbox" id="switchvalue_gps" name="selected_gps_state" {{selec_gps}} onclick="set_gps()">
+                        <span class="slider round"></span>
+                    </label>
+                    <label id="gps_state2" style="color: green;"> ON</label>
+                    <ul>
+                        <li>
+                            <ul>
+                                <li><label class="label_descr" for="cur_loc_lat">Latitude</label> </li>
+                                <li><input id="cur_loc_lat" name="current_location_lat" type="text" value="{{current_loc_lat}}" style="width: 100px; height: 20px"/> </li>
+                            </ul>
+                            <ul>
+                                <li><label class="label_descr" for="cur_rad">Radius / km</label> </li>
+                                <li><input id="cur_rad" name="current_radius" type="text" value="{{current_rad}}" style="width: 100px; height: 20px"/> </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>
+                                <li><label class="label_descr" for="cur_loc_lon">Longitude</label> </li>
+                                <li><input id="cur_loc_lon" name="current_location_lon" type="text" value="{{current_loc_lon}}" style="width: 100px; height: 20px"/> </li>
+                            </ul>
+                            <ul>
+                                <li><label class="label_descr" for="cur_zoom">Zoom</label> </li>
+                                <li><input id="cur_zoom" name="current_zoom" type="text" value="{{curr_zoom}}" style="width: 100px; height: 20px"/> </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+    <section class="lower_sec">
+        <div class="card  modal-gallery" style="overflow-y: scroll; height: 210px";>
+            <h2>CHOOSE AN IMAGE</h2>
+
+            {% for photo in photos_class %}
+
+            {% if photo.file %}
+
+                <img src='{{ photo.file.url }}' height='100' class="lozad image" onclick="image_event(href='{{ photo.file.url }}')" ondblclick="get_it_large('{{ photo.file.url }}')"/>
+
+            {% endif %}
+
+            {% endfor %}
+
+        </div>
+    </section>
+    <section class="lower_sec">
+            <div class="card" style="text-align: center">
+                <ul>
+                  <li>
+                    <label class="label_descr" for="gps_radius_range_slider">Radius Slider</label>
+                    <input type="range" min="20" max="1000000" value="500000" class="slider_rad" id="gps_radius_range_slider" onchange="slider_func()">
+                  </li>
+                  <li>
+                    <label class="label_descr" for="gps_radius_range_slider">Zoom Slider</label>
+                    <input type="range" min="2.5" max="20"  step="0.1" value="5" class="slider_rad" id="gps_zoom_slider" name="current_zoom" onchange="slider_func_zoom()">
+                  </li>
+                </ul>
+
+            </div>
+            <div class="card" style="text-align: center;">
+
+                <ul>
+                    <label class="label_descr" id="time_slider_label" style="padding-right: 5px">Time Slider</label>
+                  <li>
+                      <a onclick="prev_image()" id="prev_btn" class="btn btn-default" style="margin: 0 0 5 0; padding: 4px; width: 50px">Prev</a>
+                  </li>
+                  <li>
+                      <a onclick="play()" id="play_btn" class="btn btn-default"style="margin: 0px; padding: 4px; width: 50px">Play</a>
+                  </li>
+                  <li>
+                      <a onclick="pause()" id="pause_btn" class="btn btn-default"style="margin: 0px; padding: 4px; width: 50px">Pause</a>
+                  </li>
+                  <li>
+                      <a onclick="next_image()" id="next_btn" class="btn btn-default"style="margin: 0px; padding: 4px; width: 50px">Next</a>
+                  </li>
+
+                  <input type="range" min="1000" max="20000"  step="0.1" value="5" class="slider_rad" id="time_slider" name="current_time" onchange="slider_func_time()">
+                </ul>
+            </div>
+
+    </section>
+    <section class="lower_sec modal-background">
+            <div class="card">
+                <div id="map" style=" height: 250px"></div>
+            </div>
+            <div class="card" id="image_box"></div>
+    </section>
+
+    <section class="lower_sec">
+        <div class="card">
+            <div id="image_box_description" style="width: 100%; padding-right:3px; vertical-align: top;"></div>
+            <p id="gps_data_available" ></p>
+        </div>
+    </section>
+
+<script>
+
+    $('.closeall').click(function(){
+  $('.panel-collapse.in')
+    .collapse('hide');
+});
+$('.openall').click(function(){
+  $('.panel-collapse:not(".in")')
+    .collapse('show');
+});
+</script>
+
+
+<script>
+    const elem = document.getElementById('date_range');
+    const dateRangePicker = new DateRangePicker(elem, {
+        // options here
+    });
+</script>
+
+<script>
+  var position_to_center = {lat: 0, lng: 0};
+  let map;
+  let markersArray = [];
+  var marker = "";
+  var circle = "";
+  var radius = 500000;
+  var latLng = "";
+
+  function initMap() {
+    console.log('Map initialized')
+      map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: {{current_loc_lat}}, lng: {{current_loc_lon}}},
+          zoom: {{curr_zoom}}
+      });
+      // map onclick listener
+      map.addListener('click', function(e) {
+          //console.log(e);
+          addMarker(e.latLng);
+      });
+      console.log('before image url')
+      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+      console.log('after image url')
+      {% for latitude, longitude, img_path, date_time, GPS, classes_yolo, classes_ImgNet, photo in markers_and_infos %}
+      
+      console.log('hello')
+      
+      travel_marker = new google.maps.Marker({
+          map: map,
+          position: {lat: {{latitude}}, lng: {{longitude}}},
+          draggable: false,
+          icon: image
+      });
+
+      var infowindow = new google.maps.InfoWindow();
+      google.maps.event.addListener(travel_marker, 'click', (function(travel_marker) {
+         return function() {
+             var content = '<div>' +
+                        '<h4>Image Path</h4><p> {{ img_path }} </p>' +
+                        '<h4>Date & Time</h4><p> {{ date_time }} </p>' +
+                        '<h4>GPS</h4><p> {{ GPS }} </p>' +
+                        '<h4>classes_yolo</h4><p> {{ classes_yolo }} </p>' +
+                        '<h4>classes_ImgNet</h4><p> {{ classes_ImgNet }} </p>' +
+                        '<img src="{{ photo.file.url }}" alt="Image"  height="300"> ' +
+                        '</div>';
+             infowindow.setContent(content);
+             infowindow.open(map, travel_marker);
+         }
+       })(travel_marker));
+      
+      {% endfor %}
+
+
+      {% if current_loc_lat  != '0' %}
+          console.log({{ current_loc_lat }})
+          marker = new google.maps.Marker({
+          map: map,
+          position: {lat: {{current_loc_lat}}, lng: {{current_loc_lon}}},
+          draggable: true,
+          });
+          position_to_center = marker.getPosition();
+          circle = new google.maps.Circle({
+              center: position_to_center,
+              radius: {{current_rad}},
+              fillColor: "#0000FF",
+              fillOpacity: 0.1,
+              map: map,
+              strokeColor: "#FFFFFF",
+              strokeOpacity: 0.1,
+              strokeWeight: 2
+          });
+          updateRadius(circle, circle.radius);
+          circle.bindTo('center', marker, 'position');
+
+      {% endif %}
+
+  }
+
+
+  // define function to add marker at given lat & lng
+  function addMarker(latLng) {
+    latLng = latLng;
+    if(marker){
+      marker.setMap(null);
+      marker = "";
+
+
+
+    }
+    if(circle){
+      circle.setMap(null);
+    }
+
+
+    marker = new google.maps.Marker({
+        map: map,
+        position: latLng,
+        draggable: true,
+
+    });
+    position_to_center = marker.getPosition();
+
+    google.maps.event.addListener(marker, 'dragend',
+      function(marker) {
+        latLng = marker.latLng;
+        var inputF = document.getElementById("id1");
+
+        document.getElementById("cur_loc_lat").value = latLng.lat().toFixed(3);
+        document.getElementById("cur_loc_lon").value = latLng.lng().toFixed(3);
+
+      }
+    );
+
+    circle = new google.maps.Circle({
+      center: position_to_center,
+      radius: radius,
+      fillColor: "#0000FF",
+      fillOpacity: 0.1,
+      map: map,
+      strokeColor: "#FFFFFF",
+      strokeOpacity: 0.1,
+      strokeWeight: 2
+    });
+
+    document.getElementById("cur_loc_lat").value = latLng.lat().toFixed(3);
+    document.getElementById("cur_loc_lon").value = latLng.lng().toFixed(3);
+    circle.bindTo('center', marker, 'position');
+
+  }
+
+</script>
+
+<!-- SCRIPT SLIDER -->
+<script>
+
+    var radius = parseFloat(document.getElementById("gps_radius_range_slider").value);
+    var a = radius / 1000;
+    document.getElementById("cur_rad").value = a;
+
+    function slider_func() {
+      radius = parseFloat(document.getElementById("gps_radius_range_slider").value);
+      a = radius / 1000;
+      document.getElementById("cur_rad").value = a;
+      updateRadius(circle, radius)
+    }
+
+    function updateRadius(circle, rad){
+    circle.setRadius(rad);
+    }
+</script>
+
+<!-- SCRIPT SLIDER ZOOM -->
+<script>
+    var zoom_level = 5;
+    function slider_func_zoom(){
+        zoom_level = document.getElementById("gps_zoom_slider").value;
+        if(marker){
+            console.log('MArker found')
+            position_to_center = marker.getPosition();
+        }
+
+        console.log(zoom_level)
+        map.setCenter(position_to_center);
+        map.zoom = zoom_level;
+        map.panBy(0, 0);
+        document.getElementById("cur_zoom").value = zoom_level;
+
+    }
+</script>
+
+<!-- SWITCH LOGIC STATE -->
+<script>
+    var checkBox = document.getElementById("switchvalue");
+    console.log(checkBox.checked);
+    var logic_state = document.getElementById("logic_state");
+    var logic_state2 = document.getElementById("logic_state2");
+    if (checkBox.checked == true){
+        logic_state.innerHTML = "OR";
+        logic_state2.innerHTML = "OR";
+    } else {
+        logic_state.innerHTML = "AND";
+        logic_state2.innerHTML = "AND";
+
+    }
+    function set_logic() {
+        var checkBox = document.getElementById("switchvalue");
+        console.log(checkBox.checked);
+        var logic_state = document.getElementById("logic_state");
+        var logic_state2 = document.getElementById("logic_state2");
+        if (checkBox.checked == true){
+            logic_state.innerHTML = "OR";
+            logic_state2.innerHTML = "OR";
+        } else {
+            logic_state.innerHTML = "AND";
+            logic_state2.innerHTML = "AND";
+        }
+    }
+</script>
+
+  <!-- SWITCH GPS STATE -->
+<script>
+    var checkBox = document.getElementById("switchvalue_gps");
+    console.log(checkBox.checked);
+    var gps_state = document.getElementById("gps_state");
+    if (checkBox.checked == true){
+        gps_state.innerHTML = "ON";
+        gps_state2.innerHTML = "ON";
+
+    } else {
+        gps_state.innerHTML = "OFF";
+        gps_state2.innerHTML = "OFF";
+    }
+    function set_gps() {
+        var checkBox = document.getElementById("switchvalue_gps");
+        console.log(checkBox.checked);
+        var gps_state = document.getElementById("gps_state");
+        if (checkBox.checked == true){
+            gps_state.innerHTML = "ON";
+            gps_state2.innerHTML = "ON";
+        } else {
+            gps_state.innerHTML = "OFF";
+            gps_state2.innerHTML = "OFF";
+        }
+    }
+
+</script>
+<script>
+    function set_drop1(){
+        document.getElementById("set_drop1_in").value = drop1_selection.options[drop1_selection.selectedIndex].text;
+    }
+    function set_drop2(){
+        document.getElementById("set_drop2_in").value = drop2_selection.options[drop2_selection.selectedIndex].text;
+    }
+</script>
+
+<!-- SCRIPT Thumbnail images -->
+<script>
+
+    var markers_and_infos_json = {{ markers_and_infos_json|safe }};
+    var photos_class_js =  {{ photos_class_href|safe }};
+
+
+    var src_image = "<img id='side_image' class='viewer_class_img_horizontal img-main' src="+ photos_class_js[0] + "></img>";
+    var src_text = 
+        '<ul>' +
+        '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">Image Path</h4><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[0][2] + '</p></li>' +
+        '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">Date & Time</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[0][3]  + '</p></li>' +
+        '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">GPS</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[0][4]  + '</p></li>' +
+        '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">classes_yolo</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e"> ' + markers_and_infos_json[0][5]  + '</p></li>' +
+        '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">classes_ImgNet</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[0][6]  + '</p></li>' +
+        '</ul>';
+
+    document.getElementById("image_box").innerHTML = src_image;
+    document.getElementById("image_box_description").innerHTML = src_text;
+
+
+    $('img').mouseover(function(){
+    $(this).css('opacity','.5');
+    $(this).next('span.text').show();
+    }).mouseout(function(){
+    $(this).css('opacity','1');
+    $(this).next('span.text').hide();
+
+    });
+
+
+    //function image_event(href, image){
+    function image_event(href){
+      var path_element_list_marker = markers_and_infos_json[1][2].replace('\\', '/').split('/');
+      var path_element_list_href = href.replace('\\', '/').split('/');
+
+      var len_marker = path_element_list_marker.length;
+      var len_href = path_element_list_href.length;
+
+      var lower_slice = len_href - len_marker;
+      var image_list_elements =  path_element_list_href.slice(lower_slice, )
+      var image = image_list_elements.join('/')
+      console.log('image')
+      console.log(image)
+      console.log(href)
+      console.log(markers_and_infos_json[1][2].replace('\\', '/'))
+        for (i = 0, len = markers_and_infos_json.length; i < len; i++) {
+
+            console.log(markers_and_infos_json)
+            if (markers_and_infos_json[i][2].replace('\\', '/') == image){
+              console.log(markers_and_infos_json)
+
+                var src_image = "<img id='side_image' class='viewer_class_img_horizontal' src="+ href + "></img>";
+                var src_text = 
+                    '<ul>' +
+                    '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">Image Path</h4><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[i][2] + '</p></li>' +
+                    '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">Date & Time</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[i][3]  + '</p></li>' +
+                    '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">GPS</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[i][4]  + '</p></li>' +
+                    '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">classes_yolo</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e"> ' + markers_and_infos_json[i][5]  + '</p></li>' +
+                    '<li class="li_line"><h4 style="padding-left: 10px; padding-right: 10px; color: #42788e">classes_ImgNet</h3><p style="padding-left: 10px; padding-right: 10px; color: #42788e">' + markers_and_infos_json[i][6]  + '</p></li>' +
+                    '</ul>';
+
+                document.getElementById("image_box").innerHTML = src_image;
+                document.getElementById("image_box_description").innerHTML = src_text;
+
+
+                if (markers_and_infos_json[i][0] != 'None'){
+
+                    map.setCenter({lat: markers_and_infos_json[i][0], lng: markers_and_infos_json[i][1]});
+                    map.zoom = zoom_level;
+
+                    position_to_center = {lat: markers_and_infos_json[i][0], lng: markers_and_infos_json[i][1]};
+
+                    if(marker){
+                        marker.setMap(null);
+                        marker = "";
+
+                    }
+
+                    if(circle){
+                        circle.setMap(null);
+                    }
+
+                    circle = new google.maps.Circle({
+
+                        center: position_to_center,
+                        radius: 100000,
+                        fillColor: "#0000FF",
+                        fillOpacity: 0.1,
+                        map: map,
+                        strokeColor: "#FFFFFF",
+                        strokeOpacity: 0.1,
+                        strokeWeight: 2
+                    });
+                    document.getElementById("gps_data_available").innerHTML = "";
+                    document.getElementById("cur_loc_lat").value = markers_and_infos_json[i][0].toFixed(3);
+                    document.getElementById("cur_loc_lon").value = markers_and_infos_json[i][1].toFixed(3);
+
+                }else {
+                    map.setCenter({lat: 0, lng: 0});
+                    map.zoom = 2.5;
+                    map.panBy(0, 0);
+                    //document.getElementById("image_box_description").innerHTML = "";
+                    document.getElementById("gps_data_available").innerHTML = "NO GPS DATA";
+
+                }
+
+            }
+        }
+        if (zoom_level <10){
+          if (circle){
+            circle.setRadius(radius);
+          }
+        } else{
+          if (circle) {
+            circle.setRadius(50);
+          }
+        }
+        map.panBy(0, 0);
+
+        resize_Function();
+
+    };
+</script>
+
+<script>
+    var mainImg = document.getElementById("side_image");
+    var allModalImgs = document.querySelectorAll(".modal-gallery img");
+    console.log(allModalImgs.length)
+    console.log(mainImg.src)
+
+
+    //image_event(href, image){
+
+
+    ////// CLICK THROUGH GALLERY WITH RESPONSIVE BUTTONS //////
+
+
+
+    var currentImg = 1;
+    var forward = true;
+
+    document.getElementById("next_btn").style.background = "#abe4f8";
+    document.getElementById("prev_btn").style.background = "white";
+    function next_image() {
+        forward = true;
+        document.getElementById("next_btn").style.background = "#abe4f8";
+        document.getElementById("prev_btn").style.background = "white";
+        var mainImg = document.getElementById("side_image");
+        console.log('+++++++++++++++++++++++++++++++++++++++++')
+        console.log(mainImg.src)
+        for (i = 0, len = allModalImgs.length; i < len; i++) {
+          if (mainImg.src == allModalImgs[i].src) {
+            currentImg = i;
+          }
+        }
+
+        if (currentImg <= allModalImgs.length) {
+          currentImg = (currentImg += 1) % allModalImgs.length;
+        }
+
+        console.log('(allModalImgs[currentImg].src')
+        console.log(allModalImgs[currentImg].src);
+        image_event(allModalImgs[currentImg].src);
+
+    };
+
+    function prev_image() {
+        forward = false;
+        document.getElementById("next_btn").style.background = "white";
+        document.getElementById("prev_btn").style.background = "#abe4f8";
+        mainImg = document.getElementById("side_image");
+        for (i = 0, len =allModalImgs.length; i < len; i++) {
+          if (mainImg.src == allModalImgs[i].src) {
+            currentImg = i;
+          }
+        }
+        if (currentImg >=1){
+          currentImg = (currentImg -= 1) % allModalImgs.length;
+        }
+        else {
+          currentImg = allModalImgs.length - 1;
+        }
+
+        console.log('(allModalImgs[currentImg].src')
+        console.log(allModalImgs[currentImg].src);
+
+        image_event(allModalImgs[currentImg].src);
+
+
+    };
+    let intervalId = 0;
+    var time = document.getElementById("time_slider").value
+    var play_bool = false;
+
+
+    function play() {
+      play_bool = true;
+      document.getElementById("play_btn").style.background = "#abe4f8";
+      document.getElementById("pause_btn").style.background = "white";
+      console.log('Play')
+      time = document.getElementById("time_slider").value
+      intervalId = window.setInterval(function(){
+        if (forward == true) {
+          next_image();
+        }
+        else {
+          prev_image();
+        };
+     }, time);
+    }
+
+    function pause() {
+      play_bool = false;
+      document.getElementById("play_btn").style.background = "white";
+      document.getElementById("pause_btn").style.background = "#abe4f8";
+      console.log('Pause')
+      window.clearInterval(intervalId);
+    }
+
+    function slider_func_time() {
+      document.getElementById("time_slider_label").innerHTML = (document.getElementById("time_slider").value / 1000).toFixed(2) + ' s';
+
+      if (play_bool == true) {
+        window.clearInterval(intervalId);
+        play();
+      }
+    }
+</script>
+
+
+
+
+<script>
+    function resize_Function() {
+
+      if (document.getElementById("side_image")) {
+        image_height = document.getElementById("side_image").clientHeight;
+        image_width = document.getElementById("side_image").clientWidth;
+        document.getElementById("map").style.height = image_height;
+        console.log(image_height);
+      };
+    };
+</script>
+
+
+
+</form>
+
+
+<script>
+    function get_it_large(href){
+        window.open(href);
+
+    };
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+
+
+<script>
+  const observer = lozad();
+  observer.observe();
+</script>
+
+
+
+{% endblock %}
