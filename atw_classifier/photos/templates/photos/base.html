@@ -8,6 +8,13 @@
       <span class="glyphicon glyphicon-trash"></span> Clear Database
     </button>
   </form>
+
+  <form method = "post" action = "{% url 'rotate_all' %}">
+    {% csrf_token %}
+    <input type="submit" value="Rotate All" class="btn btn-default">
+    <button type="submit" class="btn btn-danger pull-right">Rotate All</button>
+  </form>
+
   <h1 class="page-header">
     Photos
     <small>/ {% block title %}{% endblock %}</small>
