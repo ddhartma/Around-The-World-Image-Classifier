@@ -19,15 +19,17 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from classification.views import classification, jupy_nb, home
-from photos.views import photo_list, photo_list_classification
+from photos.views import photo_list, photo_list_classification, rotate_all
 from results.views import results, analysis
-from filter_results.views import filter_results, filter_result_table_page, photo_list_filtered, get_label_classification
+from filter_results.views import filter_results, filter_result_table_page, photo_list_filtered, get_label_classification, rotateLeft
 
 from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('', classification),
+    path('accounts/', include('django.contrib.auth.urls')),
+    #path('', classification),
+    path('',TemplateView.as_view(template_name='start.html'), name='start'),
  
 
     path('home/', home, name="home_script"),
@@ -54,6 +56,11 @@ urlpatterns = [
     path('filter_results/', filter_results, name='filter_results'),
 
     path('get_label_classification/', get_label_classification, name='get_label_classification'),
+
+    path('rotateLeft/', rotateLeft, name='rotateLeft'),
+
+    path('rotate_all/', rotate_all, name='rotate_all'),
+
 ]
 
 if settings.DEBUG:

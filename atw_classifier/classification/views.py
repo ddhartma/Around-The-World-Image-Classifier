@@ -72,11 +72,13 @@ def jupy_nb(request):
 
     try:
         path = os.path.join(cwd_path, 'templates').replace('\\', '/').replace(' ', '\\')
+        print(path)
         yourCommand = 'conda activate base && ' + 'cd ' + path + ' && ' + 'jupyter notebook around_the_world_classifier.ipynb'
 
         tell.app( 'Terminal', 'do script "' + yourCommand + '"')
-
-    except:
+        print('Terminal started')
+    except Exception as e:
+        print(e)
 
         path = os.path.join(cwd_path, 'templates', 'around_the_world_classifier.ipynb')
         openJupyter = "conda activate MTP_LSTM && jupyter notebook " + path

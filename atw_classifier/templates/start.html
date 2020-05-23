@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+
+  <div style="text-align:center"><h2 style="color: black">Hello {{ user.username }}! Welocme to Around the World Classifier!!</h2></div>
+  <div style="text-align:center"><h3><a type="button" href="{% url 'logout' %}" style="color: blue">logout</a></h3></div>
+{% else %}
+  <div style="text-align:center"><h2 style="color: black">You are not logged in</h2></div>
+  <div style="text-align:center"><h3><a type="button" href="{% url 'login' %}" style="color: blue">login</a></h3></div>
+{% endif %}
+{% endblock %}

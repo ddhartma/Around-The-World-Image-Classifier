@@ -2,26 +2,33 @@ __pycache__/*
 data/apikey.txt
 Backup/*
 result_backup/*
-results*
 HTML/*
 images/*
 images_person/
+images_personal/
+images_yolo/
 images_yolo_class/*
 around_the_world_classifier_imac.ipynb
 file_path.txt
 
-.ipynb_checkpoints/around_the_world_classifier-checkpoint.ipynb
-.ipynb_checkpoints/around_the_world_classifier_imac-checkpoint.ipynb
+.ipynb_checkpoints/*
+.ipynb_checkpoints/*
 images.html
 images.xlsx
 mediafiles/*
-
+temp/*
+jupyter_starter.py
 atw_classifier/filter_results/__pycache__/views.cpython-37.pyc
 
 atw_classifier/templates/bar_plot_counts_per_day.html
 atw_classifier/templates/bar_plot_imageNet_counts.html
 atw_classifier/templates/bar_plot_yolo_counts.html
 atw_classifier/test.html
+photos/migrations/*
+atw_classifier/photos/migrations/*
+atw_classifier/results/
 
-
+atw_classifier/classification/__pycache__/*
 images_imgPerDay.xlsx
+images_imgPerDay_md_420.png
+yed_filter_flow.graphml
