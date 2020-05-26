@@ -1,4 +1,4 @@
-name: MTP_LSTM
+name: atw_windows
 channels:
   - pytorch
   - conda-forge

@@ -25,7 +25,6 @@ atw_classifier/templates/bar_plot_yolo_counts.html
 atw_classifier/test.html
 photos/migrations/*
 atw_classifier/photos/migrations/*
-atw_classifier/results/
 
 atw_classifier/classification/__pycache__/*
 images_imgPerDay.xlsx

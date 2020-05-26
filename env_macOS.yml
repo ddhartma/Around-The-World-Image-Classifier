@@ -1,4 +1,4 @@
-name: base
+name: atw_macOS
 channels:
   - pytorch
   - conda-forge
