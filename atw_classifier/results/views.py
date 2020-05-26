@@ -121,7 +121,10 @@ def dataframe_analysis():
     yolo_classes_to_int_dict =  Counter(flat_list)
     print(yolo_classes_to_int_dict)
 
-    mean_human_num_per_img = yolo_classes_to_int_dict['person'] / len(num_img_human_list)
+    if len(num_img_human_list) != 0:
+        mean_human_num_per_img = yolo_classes_to_int_dict['person'] / len(num_img_human_list)
+    else:
+        mean_human_num_per_img = 0
 
     # total number of human beings identified
     num_total_humans = yolo_classes_to_int_dict['person']
