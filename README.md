@@ -26,65 +26,64 @@ The photo classification is realized in three different approaches:
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+### Prerequisites: Installation of Python via Anaconda and Command Line Interaface
+- Install [Anaconda](https://www.anaconda.com/distribution/). Install Python 3.7 - 64 Bit
+- You need a Command Line Interface (CLI). If you are a Window user install [git](https://git-scm.com/)). Under Mac OS use the pre-installed Terminal.
+- Upgrade Anaconda via
+```
+$ conda upgrade conda
+$ conda upgrade --all
+```
 
-- To run this script you will need to use a Terminal (Mac OS) or Command Line Interface (Git Bash on Windows).
-- If you are unfamiliar with Command Line check the free [Shell Workshop](https://www.udacity.com/course/shell-workshop--ud206) lesson at Udacity.
+- Optional: In case of trouble add Anaconda to your system path. Write in your CLI
+```
+$ export PATH="/path/to/anaconda/bin:$PATH"
+```
+The project installation is divided into two parts: Part A describes the cloning of the project and the installation of the project environment. Part B describes Yolo weight settings for Transfer Learning, and the implementation of specific Django webserver settings.
 
-### Installation Part A - Python and Environment
+### Project installation Part A
+- Create a new project folder, e.g. `atw`
+- Open Git Bash (Terminal, respectively)
+- Change Directory to the newly created folder, e.g. `cd atw`
+- Clone the Github Project. Inside Git Bash (Terminal) write:
+```
+$ git clone https://github.com/ddhartma/Around-The-World-Image-Classifier.git
+```
 
-- To run this script you will need to use a Terminal (Mac OS) or Command Line Interface (e.g. Git Bash on Windows [git](https://git-scm.com/)), if you don't have it already.
-- If you are unfamiliar with Command Line coding check the free [Shell Workshop](https://www.udacity.com/course/shell-workshop--ud206) lesson at Udacity.
+- Change Directory
+```
+$ cd Around-The-World-Image-Classifier
+$ cd atw_classifier
+```
+
+- Create a new Python environment via the provided yml file. Inside Git Bash (Terminal) write:
+```
+$ conda env create -f MTP_LSTM.yml
+```
+
+- Check the environment installation via
+```
+$ conda env list
+```
+
+- Activate the installed MTP_LSTM environment via
+```
+$ conda activate MTP_LSTM (Mac OS)
+$ source activate MTP_LSTM (in case of trouble under Windows)
+```
+
+### Project installation Part B
+- Download the [yolov3 weights](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip). Place this file in the repo-folder, at location `path/to/data/config`.  This file contains the pretrained wheights for a yolov3 image detection with 80 classes. More details can be found [here](https://towardsdatascience.com/object-detection-and-tracking-in-pytorch-b3cf1a696a98).
 
 
-Besides Python you need to install several scientific Python libraries that are necessary for this project, in particular NumPy, Matplotlib, Pandas, Jupyter Notebook, Opencv, PyTorch and Torchvision. Since I have many projects with different library requirements, I prefer to use isolated environments.
-
-I provide two approaches for Python + environment installation:
-
-#### First approach - via yml-file:
-
-- Install a conda environment from the provided environment.yml file (I created this file via `conda env export > environment.yml`).
-
-  ```
-  $ conda env create -f atw_photo_class.yml
-  ```
 
 
-#### Second approach - manually:
 
-- **Phython istallation:** Of course, you obviously need Python. Python 3 is already preinstalled on many systems nowadays. You can check which version you have by typing the following command (you may need to replace python3 with python):
 
-  ```
-  $ python3 --version  # for Python 3
-  ```
-  Any Python 3 version should be fine, preferably 3.5 or above. If you don't have Python 3, you can just download it from [python.org](https://www.python.org/downloads/).
 
-  These are the commands you need to type in a terminal if you want to use pip to install the required libraries. If possible use conda for installation.
 
-  First you need to make sure you have the latest version of conda installed:
 
-  ```
-  $ conda update conda
-  ```
 
-  Next, create an isolated environment. This is recommended as it makes it possible to have a different environment for each project (e.g. one for this project), with potentially very different libraries, and different versions:
-
-  ```
-  $ conda create -n atw_photo_class python=3.6
-  ```
-
-  This creates a new isolated Python environment based on Python 3. If you wish a higher Phyton version (e.g. Python 3.7), feel free to change it.
-
-  Now you must activate this environment. You will need to run this command every time you want to use this environment.
-
-  On Windows:
-  ```
-  $ source activate atw_photo_class
-  ```
-  On Mac:
-  ```
-  $ conda activate atw_photo_class
-  ```
 
 - **Important libraries:**
   - Install NumPy, Pandas, Matplotlib
@@ -137,7 +136,7 @@ Great! You're all set, you just need to start Jupyter now.
 
 The following files were used for this project:
 
-- around_the_world_classifier.ipynb.ipynb
+- around_the_world_classifier.ipynb
 - folder **data**. This folder contains the **config** folder containing yolov3 files.
 - folder **utils** (important for yolov3 pretrained learning).
 

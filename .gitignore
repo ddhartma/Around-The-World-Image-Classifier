@@ -15,7 +15,6 @@ file_path.txt
 .ipynb_checkpoints/*
 images.html
 images.xlsx
-mediafiles/*
 temp/*
 jupyter_starter.py
 atw_classifier/filter_results/__pycache__/views.cpython-37.pyc
@@ -32,3 +31,5 @@ atw_classifier/classification/__pycache__/*
 images_imgPerDay.xlsx
 images_imgPerDay_md_420.png
 yed_filter_flow.graphml
+
+README.md
