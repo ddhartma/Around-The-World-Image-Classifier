@@ -7,8 +7,7 @@ from io import BytesIO
 
 # Create your models here.
 class Photo(models.Model):
-    #upload_folder = 'weltreise_2014_yolo'
-    upload_folder = 'weltreise_2014'
+    upload_folder = ''
     title = models.CharField(max_length=200)
     width = models.IntegerField(default=0)
     height = models.IntegerField(default=0)
@@ -46,7 +45,7 @@ class Photo(models.Model):
 
 
 class Photo_yolo(models.Model):
-    upload_folder = 'weltreise_2014_yolo'
+    upload_folder = ''
     title = models.CharField(max_length=200)
     width = models.IntegerField(default=0)
     height = models.IntegerField(default=0)
