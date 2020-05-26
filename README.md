@@ -42,10 +42,9 @@ $ export PATH="/path/to/anaconda/bin:$PATH"
 The project installation is divided into two parts: Part A describes the cloning of the project and the installation of the project environment. Part B describes Yolo weight settings for Transfer Learning, and the implementation of specific Django webserver settings.
 
 ### Project installation Part A
-- Create a new project folder, e.g. `atw`
 - Open Git Bash (Terminal, respectively)
-- Change Directory to the newly created folder, e.g. `cd atw`
-- Clone the Github Project. Inside Git Bash (Terminal) write:
+- Change Directory to your project older, e.g. `cd my_github_projects`
+- Clone the Github Project inside this folder with Git Bash (Terminal) vias:
 ```
 $ git clone https://github.com/ddhartma/Around-The-World-Image-Classifier.git
 ```
@@ -53,12 +52,12 @@ $ git clone https://github.com/ddhartma/Around-The-World-Image-Classifier.git
 - Change Directory
 ```
 $ cd Around-The-World-Image-Classifier
-$ cd atw_classifier
 ```
 
 - Create a new Python environment via the provided yml file. Inside Git Bash (Terminal) write:
 ```
-$ conda env create -f MTP_LSTM.yml
+$ conda env create -f env_windows.yml (under Windows)
+$ conda env create -f env_macOS.yml (under Mac OS)
 ```
 
 - Check the environment installation via
