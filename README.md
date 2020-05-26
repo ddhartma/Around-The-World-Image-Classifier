@@ -1,7 +1,3 @@
-[//]: # (Image References)
-
-[image1]: dog_pred_example.png "Sample Output"
-
 # Around The World Photo Classifier
 
 This is a Django webserver application. It incorporates Jupyter notebook operation and web page visualization of a deep learning - image classification topic. Via Jupyter notebooks the deep learning events and data exctration (image classification, GPS data, datetime) are processed, evaluated and documentated. Image uploads, data analysis and classification results are organized and shown via web pages. Data analysis visualization is supported by Plotly plots, tables and image bags.
@@ -67,87 +63,51 @@ $ conda env list
 
 - Activate the installed MTP_LSTM environment via
 ```
-$ conda activate MTP_LSTM (Mac OS)
-$ source activate MTP_LSTM (in case of trouble under Windows)
+$ conda activate atw_macOS (Mac OS)
+$ conda activate atw_windows
 ```
 
 ### Project installation Part B
-- Download the [yolov3 weights](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip). Place this file in the repo-folder, at location `path/to/data/config`.  This file contains the pretrained wheights for a yolov3 image detection with 80 classes. More details can be found [here](https://towardsdatascience.com/object-detection-and-tracking-in-pytorch-b3cf1a696a98).
+- Download the [yolov3 weights](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip). Place this file in the repo-folder, at location `path/to/Around-The-World-Image-Classifier/atw_classifier/templates/data/config`.  This file contains the pretrained wheights for a yolov3 image detection with 80 classes. More details can be found [here](https://towardsdatascience.com/object-detection-and-tracking-in-pytorch-b3cf1a696a98).
 
+- Get your [GMPAS API](https://developers.google.com/maps/documentation?hl=de)
 
+- Put in this API in .../Around-The-World-Image-Classifier/atw_classifier/templates/layout.html in line 13 under src="ENTER YOUR GMAPS API HERE">
 
-
-
-
-
-
-
-
-
-- **Important libraries:**
-  - Install NumPy, Pandas, Matplotlib
-    ```
-    $ conda install numpy
-    $ conda install pandas
-    $ python -m pip install -U pip
-    $ python -m pip install -U matplotlib
-    ```
-
-  - Install [PyTorch](https://pytorch.org/?utm_source=Google&utm_medium=PaidSearch&utm_campaign=%2A%2ALP+-+TM+-+General+-+HV+-+GER&utm_adgroup=Conda+Install+PyTorch&utm_keyword=%2Bconda%20%2Binstall%20%2Bpytorch&utm_offering=AI&utm_Product=PyTorch&gclid=CjwKCAjw3-bzBRBhEiwAgnnLCszXVKwBc_0Rjx6qpPPqiq7NwCwm0nEqIXOsNrrqJ4lZ1FMCVF4nhxoCeZUQAvD_BwE) for your system. Use the provided conda or pip command in your terminal for your specific system (e.g. Mac or Windows, CPU or GPU).
-
-  - Install gmaps via
-
-    ```
-    $ conda install -c conda-forge gmaps
-    ```
-
-  - Install opencv-python via
-
-    ```
-    $ conda install -c conda-forge opencv
-    ```
-  - Install pillow
-    ```
-    $ pip install Pillow==6.0.0
-    ```
-    Important Note: Use a version of Pillow <7.0 if you want to analyse jpg file formats. Pillow >=7.0 leads to error messages.
-
-### Installation Part B - Clone the Repo, Download yolov3 weights, provide your dataset
-
-- Clone this repository by opening a terminal and typing the following commands:
-
-  ```
-  $ cd to your development directory. Eventually create a new one via:
-  $ (mkdir folder_name)
-  $ (cd folder_name)
-  $ git clone https://github.com/ddhartma/tbd.git
-  $ cd tbt
-  ```
-
-- Download the [yolov3 weights](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip). Place this file in the repo-folder, at location `path/to/data/config`.  This file contains the pretrained wheights for a yolov3 image detection with 80 classes. More details can be found [here](https://towardsdatascience.com/object-detection-and-tracking-in-pytorch-b3cf1a696a98).
-
-- Place your dataset (stored in one folder) in the tbt folder.
-
-
-Great! You're all set, you just need to start Jupyter now.
-
-## Running the tests
-
-The following files were used for this project:
-
-- around_the_world_classifier.ipynb
-- folder **data**. This folder contains the **config** folder containing yolov3 files.
-- folder **utils** (important for yolov3 pretrained learning).
-
-Open a terminal window and navigate to the project folder. Open the notebook and follow the instructions.
+- Change directory to Django webserver
 ```
-jupyter notebook around_the_world_classifier.ipynb
+$ cd atw_classifier
+```
+- Apply migrations to Django webserver
+```
+$ python manage.py migrate
+```
+- Create an Admin
+```
+$ python manage.py createsuperuser
+```
+- Store your images under
+```
+$ .../Around-The-World-Image-Classifier/images
 ```
 
-- Follow the instructions in the notebook.
+- Upload images. Click on 'UPLOAD IMAGES' in the Navigation Bar
+<img src='readme_images/readme_image1.png' width=100% />
 
-__NOTE:__ In the notebook, you will need to train CNNs in PyTorch.  If your CNN is taking too long to train, feel free to pursue one of the options under the section __Accelerating the Training Process__ below.
 
+- Then click on 'UPLOAD PHOTOS'. Choose images you want to classify. For automatic rotation correction click on 'ROTATE ALL'.
+<img src='readme_images/readme_image2.png' width=100% />
+
+
+- Click on 'CLASSIFICATION' and click on the button 'start the Jupyter Notebook 'around_the_world_classifier.ipynb'
+<img src='readme_images/readme_image3.png' width=100% />
+
+
+- Run the notebook for automatic classification. If you stored your images at a diddferent place then ''.../Around-The-World-Image-Classifier/images', provide the spoecific image path under 'PART A2 PATH SETTING'.
+<img src='readme_images/readme_image4.png' width=100% />
+
+
+Enjoy!
 
 
 ## (Optionally) Accelerating the Training Process
