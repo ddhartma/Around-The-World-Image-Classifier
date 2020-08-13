@@ -1,20 +1,20 @@
 # Around The World Photo Classifier
 
-This is a Django webserver application. It incorporates Jupyter notebook operation and web page visualization of a deep learning - image classification topic. Via Jupyter notebooks the deep learning events and data exctration (image classification, GPS data, datetime) are processed, evaluated and documentated. Image uploads, data analysis and classification results are organized and shown via web pages. Data analysis visualization is supported by Plotly plots, tables and image bags.
+This is a Django webserver application. It incorporates Jupyter notebook operation and web page visualization of a deep learning - image classification topic. Via Jupyter notebooks the deep learning events and data exctration (image classification, GPS data, datetime) are processed, evaluated and documented. Image uploads, data analysis and classification results are organized and shown via web pages. Data analysis visualization is supported by Plotly plots, tables and image bags.
 
 
 All Deep Learning classification events are placed inside the Jupyter notebook **around_the_world_classifier.ipynb**. It has four purposes:
 1. It extracts datetimes (if available)
 2. It extracts GPS data (if available)
-3. It provides object classification via yolo3v, ImageNet and personalized CNNs
-4. It filters, sorts and rearranges images based on the extraced data
+3. It provides object classification via yolo3v, ImageNet and personified CNNs
+4. It filters, sorts and rearranges images based on the extracted data
 
 Datetimes and GPS data are extracted from the image meta data using the pillow library.
 
 The photo classification is realized in three different approaches:
 1. by using a yolov3 object detection algorithm. Here, I am using yolov3 pretrained wheights. Deep Learning Inference with own images enables a detection of up to 80 different classes within one image. A Boundary box with a class description is provided and stored in a separate folder **.../path_to_your_image_folder_name_** _yolo_class_  as well as stored in an html table (**your_image_folder_name.html**).
 2. by using a CNN based pretrained model from Torchvision via Transfer Learning. As a standard VGG16 is chosen. However, you can replace VGG16 by any ozjer torchvision model. VGG16 is using the whole ImageNet classification system, The total number of classes is 1000. The file **data/imagenet_classes.txt** provides a dictionary of all one 1000 classes.
-3. by using an own CNN based architecture with a layer combination of three times 'Conv-ReLU-MaxPool', deeply enough for sufficient feature extraction and an appropriate image size/feature reduction. The goal of this CNN is to filter peronalized images, e.g. to identify images of yourself. However, for this classification step you have to provide a dataset of at least 300 personolized images. This CNN is not pretrained. You have to train it separately. For further information, follow the instruction in the Jupyter Notebook.
+3. by using an own CNN based architecture with a layer combination of three times 'Conv-ReLU-MaxPool', deeply enough for sufficient feature extraction and an appropriate image size/feature reduction. The goal of this CNN is to filter personified images, e.g. to identify images of yourself. However, for this classification step you have to provide a dataset of at least 300 personified images. This CNN is not pretrained. You have to train it separately. For further information, follow the instruction in the Jupyter Notebook.
 
 
 
@@ -110,7 +110,7 @@ $ .../Around-The-World-Image-Classifier/images
 Enjoy!
 
 
-## (Optionally) Accelerating the Training Process
+## (Optionally) Accelerating the Training Process (personified image classification)
 
 If your code is taking too long to run, you will need to either reduce the complexity of your chosen CNN architecture or switch to running your code on a GPU.  If you'd like to use a GPU, you can spin up an instance of your own:
 
